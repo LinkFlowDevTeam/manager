@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.CommonTicketDao">
+
+<resultMap id="BaseResultMap" type="CommonTicketVO">
+<id column="tk_idx" property="tkIdx" jdbcType="BIGINT"/>
+<result column="tk_state" property="tkState" jdbcType="TINYINT"/>
+<result column="tk_create_date" property="tkCreateDate" jdbcType="TIMESTAMP"/>
+<result column="tk_update_date" property="tkUpdateDate" jdbcType="TIMESTAMP"/>
+<result column="tk_user_id" property="tkUserId" jdbcType="VARCHAR"/>
+<result column="tk_request_data" property="tkRequestData" jdbcType="VARCHAR"/>
+<result column="tk_sign" property="tkSign" jdbcType="VARCHAR"/>
+<result column="tk_error_count" property="tkErrorCount" jdbcType="TINYINT"/>
+</resultMap>
+
+<sql id="Base_Column_List">tk_idx,tk_state,tk_create_date,tk_update_date,tk_user_id,tk_request_data,tk_sign,tk_error_count</sql>
+
+<sql id="BaseSearchQuery">
+<trim suffixOverrides="AND">
+<if test="tkIdx != null">tk_idx = #{tkIdx} AND</if>
+<if test="tkState != null">tk_state = #{tkState} AND</if>
+<if test="tkUserId != null">tk_user_id = #{tkUserId} AND</if>
+<if test="tkRequestData != null">tk_request_data = #{tkRequestData} AND</if>
+<if test="tkSign != null">tk_sign = #{tkSign} AND</if>
+</trim>
+</sql>
+
+<insert id="insert" parameterType="CommonTicketVO" useGeneratedKeys="true" keyProperty="tkIdx">
+INSERT INTO z_common_ticket
+<trim prefix="(" suffix=")" suffixOverrides=",">
+<if test="tkState != null">tk_state,</if>
+<if test="tkUserId != null">tk_user_id,</if>
+<if test="tkRequestData != null">tk_request_data,</if>
+<if test="tkSign != null">tk_sign,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides=",">
+<if test="tkState != null">#{tkState,jdbcType=TINYINT},</if>
+<if test="tkUserId != null">#{tkUserId,jdbcType=VARCHAR},</if>
+<if test="tkRequestData != null">#{tkRequestData,jdbcType=VARCHAR},</if>
+<if test="tkSign != null">#{tkSign,jdbcType=VARCHAR},</if>
+</trim>
+</insert>
+
+<select id="selectByIndex" resultMap="BaseResultMap">
+SELECT
+<include refid="Base_Column_List"/>
+FROM z_common_ticket
+WHERE tk_idx = #{idx}
+</select>
+
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_common_ticket <where><include refid="BaseSearchQuery"/></where> <if test="orderColumn != null">Order by ${orderColumn} ${order}</if> <if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if> <if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_common_ticket <if test="orderColumn != null"> Order by ${orderColumn} ${order} </if> <if test="limit != null"> LIMIT #{limit} </if> </select>
+<select id="countBySearch" parameterType="hashmap" resultType="Long">SELECT COUNT(*) FROM z_common_ticket <where> <include refid="BaseSearchQuery"/> </where> </select>
+<select id="countAll" resultType="Long">SELECT COUNT(*) FROM z_common_ticket </select>
+<update id="update" parameterType="CommonTicketVO">update z_common_ticket <set> <if test="tkState != null">tk_state = #{tkState,jdbcType=TINYINT},</if> </set> where tk_idx = #{tkIdx,jdbcType=BIGINT} </update>
+<update id="updateSign" parameterType="hashmap">
+update z_common_ticket
+<set>
+tk_update_date = SYSDATE(),
+<if test="tkSign != null">tk_sign = #{tkSign,jdbcType=VARCHAR},</if>
+<if test="tkState != null">tk_state = #{tkState,jdbcType=TINYINT},</if>
+</set>
+<where>
+<if test="tkIdx != null">
+<if test="tkUserId != null">
+tk_idx = #{tkIdx,jdbcType=BIGINT} AND tk_user_id = #{tkUserId,jdbcType=VARCHAR}
+</if>
+</if>
+</where>
+</update>
+
+<update id="updateDate" parameterType="hashmap">update z_common_ticket <set> tk_update_date = SYSDATE() </set> <where><trim suffixOverrides="AND"> tk_state = 1 AND tk_idx = #{tkIdx,jdbcType=BIGINT} </trim></where></update>
+<update id="increaseErrorCount" parameterType="hashmap">update z_common_ticket <set> tk_error_count = tk_error_count + 1 </set> <where><trim suffixOverrides="AND"> tk_idx = #{tkIdx,jdbcType=BIGINT} </trim></where></update>
+<delete id="deleteByIndex" parameterType="Long">DELETE FROM z_common_ticket WHERE tk_idx = #{tkIdx,jdbcType=BIGINT} </delete>
+<delete id="deleteByUpdateDate" parameterType="hashmap">DELETE FROM z_common_ticket <where> <if test="updateDate != null">tk_idx >= 0 AND #{updateDate} >= tk_update_date</if> </where> </delete>
+<delete id="deleteOverSecond" parameterType="hashmap">DELETE FROM z_common_ticket <where>tk_idx >= 0 AND DATE_SUB(SYSDATE(), INTERVAL ${searchSecond} SECOND) >= tk_update_date</where></delete>
+</mapper>

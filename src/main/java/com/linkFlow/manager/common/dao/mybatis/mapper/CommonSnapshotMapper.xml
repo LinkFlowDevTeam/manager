@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.CommonSnapshotDao" >
+<resultMap id="BaseResultMap" type="CommonSnapshotVO" >
+<id column="cs_idx" property="csIdx" jdbcType="BIGINT" />
+<result column="cs_target_idx" property="csTargetIdx" jdbcType="BIGINT" />
+<result column="cs_update_date" property="csUpdateDate" jdbcType="TIMESTAMP" />
+<result column="cs_state" property="csState" jdbcType="TINYINT" />
+<result column="cs_type" property="csType" jdbcType="TINYINT" />
+<result column="cs_data1" property="csData1" jdbcType="VARCHAR" />
+<result column="cs_data2" property="csData2" jdbcType="VARCHAR" />
+<result column="cs_data3" property="csData3" jdbcType="VARCHAR" />
+<result column="cs_data4" property="csData4" jdbcType="VARCHAR" />
+<result column="cs_data5" property="csData5" jdbcType="VARCHAR" />
+<result column="cs_data6" property="csData6" jdbcType="VARCHAR" />
+<result column="cs_data7" property="csData7" jdbcType="VARCHAR" />
+</resultMap>
+
+<sql id="Base_Column_List" >cs_idx,cs_update_date,cs_state,cs_type,cs_data1,cs_data2,cs_data3,cs_data4,cs_data5,cs_data6,cs_data7</sql>
+
+<sql id="BaseSearchQuery">
+<trim suffixOverrides="AND">
+<if test="csIdx != null">cs_idx = #{csIdx} AND</if>
+<if test="csState != null">cs_state = #{csState} AND</if>
+<if test="csType != null">cs_type = #{csType} AND</if>
+<if test="searchStartDate != null and searchStartDate != ''">cs_update_date >= #{searchStartDate} AND</if>
+<if test="searchEndDate != null and searchEndDate != ''">#{searchEndDate} >= cs_update_date AND</if>
+</trim>
+</sql>
+
+<insert id="insert" parameterType="CommonSnapshotVO" ></insert>
+<insert id="insertOrUpdate" parameterType="CommonSnapshotVO" >
+insert into z_common_snapshot
+<trim prefix="(" suffix=")" suffixOverrides="," >
+<if test="csTargetIdx != null" >cs_target_idx,</if>
+<if test="csState != null" >cs_state,</if>
+<if test="csType != null" >cs_type,</if>
+<if test="csData1 != null" >cs_data1,</if>
+<if test="csData2 != null" >cs_data2,</if>
+<if test="csData3 != null" >cs_data3,</if>
+<if test="csData4 != null" >cs_data4,</if>
+<if test="csData5 != null" >cs_data5,</if>
+<if test="csData6 != null" >cs_data6,</if>
+<if test="csData7 != null" >cs_data7,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides="," >
+<if test="csTargetIdx != null" >#{csTargetIdx,jdbcType=BIGINT},</if>
+<if test="csState != null" >#{csState,jdbcType=TINYINT},</if>
+<if test="csType != null" >#{csType,jdbcType=TINYINT},</if>
+<if test="csData1 != null" >#{csData1,jdbcType=VARCHAR},</if>
+<if test="csData2 != null" >#{csData2,jdbcType=VARCHAR},</if>
+<if test="csData3 != null" >#{csData3,jdbcType=VARCHAR},</if>
+<if test="csData4 != null" >#{csData4,jdbcType=VARCHAR},</if>
+<if test="csData5 != null" >#{csData5,jdbcType=VARCHAR},</if>
+<if test="csData6 != null" >#{csData6,jdbcType=VARCHAR},</if>
+<if test="csData7 != null" >#{csData7,jdbcType=VARCHAR},</if>
+</trim>
+ON DUPLICATE KEY UPDATE
+<trim suffixOverrides=",">
+cs_update_date = SYSDATE(),
+<if test="csState != null" >cs_state = #{csState,jdbcType=TINYINT},</if>
+<if test="csData1 != null" >cs_data1 = #{csData1,jdbcType=VARCHAR},</if>
+<if test="csData2 != null" >cs_data2 = #{csData2,jdbcType=VARCHAR},</if>
+<if test="csData3 != null" >cs_data3 = #{csData3,jdbcType=VARCHAR},</if>
+<if test="csData4 != null" >cs_data4 = #{csData4,jdbcType=VARCHAR},</if>
+<if test="csData5 != null" >cs_data5 = #{csData5,jdbcType=VARCHAR},</if>
+<if test="csData6 != null" >cs_data6 = #{csData6,jdbcType=VARCHAR},</if>
+<if test="csData7 != null" >cs_data7 = #{csData7,jdbcType=VARCHAR},</if>
+</trim>
+</insert>
+
+<update id="update" parameterType="CommonSnapshotVO" >
+update z_common_snapshot
+<set >
+cs_update_date = SYSDATE(),
+<if test="csState != null" >cs_state = #{csState,jdbcType=TINYINT},</if>
+<if test="csData1 != null" >cs_data1 = #{csData1,jdbcType=VARCHAR},</if>
+<if test="csData2 != null" >cs_data2 = #{csData2,jdbcType=VARCHAR},</if>
+<if test="csData3 != null" >cs_data3 = #{csData3,jdbcType=VARCHAR},</if>
+<if test="csData4 != null" >cs_data4 = #{csData4,jdbcType=VARCHAR},</if>
+<if test="csData5 != null" >cs_data5 = #{csData5,jdbcType=VARCHAR},</if>
+<if test="csData6 != null" >cs_data6 = #{csData6,jdbcType=VARCHAR},</if>
+<if test="csData7 != null" >cs_data7 = #{csData7,jdbcType=VARCHAR},</if>
+</set>
+where cs_idx = #{csIdx,jdbcType=BIGINT}
+</update>
+<update id="updateByKey" parameterType="CommonSnapshotVO" >
+update z_common_snapshot
+<set >
+cs_update_date = SYSDATE(),
+<if test="csState != null" >cs_state = #{csState,jdbcType=TINYINT},</if>
+<if test="csData1 != null" >cs_data1 = #{csData1,jdbcType=VARCHAR},</if>
+<if test="csData2 != null" >cs_data2 = #{csData2,jdbcType=VARCHAR},</if>
+<if test="csData3 != null" >cs_data3 = #{csData3,jdbcType=VARCHAR},</if>
+<if test="csData4 != null" >cs_data4 = #{csData4,jdbcType=VARCHAR},</if>
+<if test="csData5 != null" >cs_data5 = #{csData5,jdbcType=VARCHAR},</if>
+<if test="csData6 != null" >cs_data6 = #{csData6,jdbcType=VARCHAR},</if>
+<if test="csData7 != null" >cs_data7 = #{csData7,jdbcType=VARCHAR},</if>
+</set>
+where cs_target_idx = #{csTargetIdx,jdbcType=BIGINT} AND cs_type = #{csType,jdbcType=TINYINT}
+</update>
+
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_common_snapshot <where><include refid="BaseSearchQuery"/></where><if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if><if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="countBySearch" parameterType="hashmap" resultType="Long">SELECT COUNT(*) FROM z_common_snapshot <where><include refid="BaseSearchQuery"/></where></select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_common_snapshot <if test="orderColumn != null"> Order by ${orderColumn} ${order} </if> <if test="limit != null">LIMIT #{limit}</if></select>
+<select id="countAll" resultType="Long">SELECT COUNT(*) FROM z_common_snapshot</select>
+<select id="selectByIndex" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/>FROM z_common_snapshot WHERE cs_idx = #{idx}</select>
+<delete id="deleteByIndex" parameterType="Long">DELETE FROM z_common_snapshot WHERE cs_idx = #{idx}</delete>
+</mapper>

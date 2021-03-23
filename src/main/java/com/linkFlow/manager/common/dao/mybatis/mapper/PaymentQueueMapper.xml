@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.PaymentQueueDao">
+
+<resultMap id="BaseResultMap" type="PaymentQueueVO">
+<id column="pq_idx" property="pqIdx" jdbcType="BIGINT"/>
+<result column="pq_create_date" property="pqCreateDate" jdbcType="TIMESTAMP"/>
+<result column="pq_update_date" property="pqUpdateDate" jdbcType="TIMESTAMP"/>
+<result column="pq_payment_type" property="pqPaymentType" jdbcType="TINYINT"/>
+<result column="pq_unique_id" property="pqUniqueId" jdbcType="VARCHAR"/>
+<result column="pq_tr_flag" property="pqTrFlag" jdbcType="TINYINT"/>
+<result column="pq_mb_idx" property="pqMbIdx" jdbcType="BIGINT"/>
+<result column="pq_send_from" property="pqSendFrom" jdbcType="VARCHAR"/>
+<result column="pq_send_to" property="pqSendTo" jdbcType="VARCHAR"/>
+<result column="pq_send_memo" property="pqSendMemo" jdbcType="VARCHAR"/>
+<result column="pq_tk_idx" property="pqTkIdx" jdbcType="TINYINT"/>
+<result column="pq_symbol" property="pqSymbol" jdbcType="VARCHAR"/>
+<result column="pq_state" property="pqState" jdbcType="TINYINT"/>
+<result column="pq_amount" property="pqAmount" jdbcType="DECIMAL"/>
+<result column="pq_req_amount" property="pqReqAmount" jdbcType="DECIMAL"/>
+<result column="pq_fee" property="pqFee" jdbcType="DECIMAL"/>
+<result column="pq_before" property="pqBefore" jdbcType="DECIMAL"/>
+<result column="pq_after" property="pqAfter" jdbcType="DECIMAL"/>
+<result column="pq_result_data" property="pqResultData" jdbcType="VARCHAR"/>
+<result column="pq_sequence" property="pqSequence" jdbcType="VARCHAR"/>
+<result column="pq_et_to" property="pqEtTo" jdbcType="VARCHAR"/>
+<result column="pq_et_from" property="pqEtFrom" jdbcType="VARCHAR"/>
+<result column="pq_et_actual_to" property="pqEtActualTo" jdbcType="VARCHAR"/>
+<result column="pq_timestamp" property="pqTimestamp" jdbcType="VARCHAR"/>
+<result column="pq_error_count" property="pqErrorCount" jdbcType="TINYINT"/>
+<result column="pq_ck_state" property="pqCkState" jdbcType="TINYINT"/>
+<result column="pq_rq_date" property="pqRqDate" jdbcType="TIMESTAMP"/>
+<result column="pq_tx_state" property="pqTxState" jdbcType="TINYINT"/>
+<result column="pq_tx_date" property="pqTxDate" jdbcType="TIMESTAMP"/>
+<result column="pq_rs_state" property="pqRsState" jdbcType="TINYINT"/>
+<result column="pq_rs_date" property="pqRsDate" jdbcType="TIMESTAMP"/>
+<result column="pq_block_number" property="pqBlockNumber" jdbcType="BIGINT"/>
+<result column="pq_tx_hash" property="pqTxHash" jdbcType="VARCHAR"/>
+<result column="pq_gas_limit" property="pqGasLimit" jdbcType="INTEGER"/>
+<result column="pq_gas_price" property="pqGasPrice" jdbcType="BIGINT"/>
+<result column="pq_nonce" property="pqNonce" jdbcType="BIGINT"/>
+
+<result column="pq_to_mb_idx" property="pqToMbIdx" jdbcType="BIGINT"/>
+<result column="pq_to_mb_id" property="pqToMbId" jdbcType="VARCHAR"/>
+<result column="pq_to_mb_name" property="pqToMbName" jdbcType="VARCHAR"/>
+
+<association property="tokenInfoVO" javaType="TokenInfoVO" column="tk_idx" autoMapping="true" />
+<association property="memberVO" javaType="MemberVO" column="mb_idx" autoMapping="true" />
+</resultMap>
+
+
+<resultMap id="SumResultMap" type="PaymentQueueVOForSum">
+<result column="pq_payment_type" property="pqPaymentType" jdbcType="TINYINT"/>
+<result column="count_item" property="countItem" jdbcType="INTEGER"/>
+<result column="pq_amount" property="pqAmount" jdbcType="DECIMAL"/>
+<result column="pq_req_amount" property="pqReqAmount" jdbcType="DECIMAL"/>
+<result column="pq_fee" property="pqFee" jdbcType="DECIMAL"/>
+</resultMap>
+
+
+<sql id="Base_Column_List">pq_idx,pq_create_date,pq_update_date,pq_payment_type,pq_unique_id,pq_tr_flag,pq_tk_idx,pq_symbol,pq_mb_idx,pq_state,pq_amount, pq_req_amount,pq_fee,pq_before,pq_after,pq_result_data,pq_sequence,pq_et_to,pq_et_from,pq_et_actual_to,pq_data1, pq_data2,pq_tx_state,pq_tx_date,pq_rs_state,pq_rs_date,pq_block_number,pq_tx_hash,pq_gas_limit,pq_rq_date,pq_error_count, pq_ck_state,pq_nonce,pq_gas_price,pq_send_from,pq_send_to,pq_send_memo,pq_timestamp,pq_eos_memo,pq_to_mb_idx,pq_to_mb_id,pq_to_mb_name</sql>
+<sql id="Join_Column_List" >mb.*, tk.*</sql>
+<sql id="Sum_Column_List">pq_payment_type as pq_payment_type, COUNT(pq_idx) as count_item, SUM(pq_amount) as pq_amount, SUM(pq_req_amount) as pq_req_amount, SUM(pq_fee) as pq_fee</sql>
+
+<sql id="BaseSearchQuery">
+<trim suffixOverrides="AND">
+<if test="searchColumn != null and search != ''">
+<if test="searchColumn == 'all'">
+(pq_send_from = #{search} OR
+pq_send_to = #{search} OR
+mb_erc20_address = #{search} OR
+mb_id LIKE CONCAT(#{search}, '%') OR
+pq_to_mb_id LIKE CONCAT(#{search}, '%') OR
+pq_tx_hash = #{search}
+) AND
+</if>
+</if>
+<if test="searchStartDate != null and searchStartDate != ''">pq_create_date >= #{searchStartDate} AND</if>
+<if test="searchEndDate != null and searchEndDate != ''">#{searchEndDate} >= pq_create_date AND</if>
+<if test="pqCreateDate != null and pqCreateDate != ''">  Date(pq_create_date) = #{pqCreateDate} AND</if>
+<if test="pqSequenceOver != null and pqSequenceOver != ''">pq_sequence >= #{pqSequenceOver} AND</if>
+<if test="pqSequenceUnder != null and pqSequenceUnder != ''">#{pqSequenceUnder} >= pq_sequence AND</if>
+<if test="pqIdx != null">pq_idx = #{pqIdx} AND</if>
+<if test="pqPaymentType != null">pq_payment_type = #{pqPaymentType} AND</if>
+<if test="pqUniqueId != null">pq_unique_id = #{pqUniqueId} AND</if>
+<if test="pqTrFlag != null">pq_tr_flag = #{pqTrFlag} AND</if>
+<if test="pqMbIdx != null">pq_mb_idx = #{pqMbIdx} AND</if>
+<if test="pqToMbIdx != null">pq_to_mb_idx = #{pqToMbIdx} AND</if>
+<if test="pqToMbId != null">pq_to_mb_id = #{pqToMbId} AND</if>
+<if test="pqToMbName != null">pq_to_mb_name = #{pqToMbName} AND</if>
+<if test="pqSendFrom != null">pq_send_from = #{pqSendFrom} AND</if>
+<if test="pqSendTo != null">pq_send_to = #{pqSendTo} AND</if>
+<if test="pqSendMemo != null">pq_send_memo = #{pqSendMemo} AND</if>
+<if test="pqTkIdx != null">pq_tk_idx = #{pqTkIdx} AND</if>
+<if test="pqSymbol != null">pq_symbol = #{pqSymbol} AND</if>
+<if test="pqTkIdxList != null">pq_tk_idx IN <foreach collection="pqTkIdxList" item="item" index="index" separator="," open="(" close=")">#{item} </foreach> AND </if>
+<if test="pqSymbolList != null">pq_symbol IN <foreach collection="pqSymbolList" item="item" index="index" separator="," open="(" close=")">#{item} </foreach> AND </if>
+<if test="pqState != null">pq_state = #{pqState} AND</if>
+<if test="pqCkState != null">pq_ck_state = #{pqCkState} AND</if>
+<if test="pqTxState != null">pq_tx_state = #{pqTxState} AND</if>
+<if test="pqRsState != null">pq_rs_state = #{pqRsState} AND</if>
+<if test="pqResultData != null">pq_result_data = #{pqResultData} AND</if>
+<if test="pqSequence != null">pq_sequence = #{pqSequence} AND</if>
+<if test="pqEtTo != null">pq_et_to = #{pqEtTo} AND</if>
+<if test="pqEtFrom != null">pq_et_from = #{pqEtFrom} AND</if>
+<if test="pqEtActualTo != null">pq_et_actual_to = #{pqEtActualTo} AND</if>
+<if test="pqTimestamp != null">pq_timestamp = #{pqTimestamp} AND</if>
+<if test="pqTxHash != null">pq_tx_hash = #{pqTxHash} AND</if>
+<if test="pqNonce != null">pq_nonce = #{pqNonce} AND</if>
+<if test="pqPaymentTypeList != null">pq_payment_type IN <foreach collection="pqPaymentTypeList" item="item" index="index" separator="," open="(" close=")">#{item} </foreach> AND </if>
+<if test="pqStateList != null">pq_state IN <foreach collection="pqStateList" item="item" index="index" separator="," open="(" close=")">#{item} </foreach> AND </if>
+<if test="tkType != null">tk_type = #{tkType} AND</if>
+<if test="pqMbIdxNotIn != null">pq_mb_idx NOT IN <foreach collection="pqMbIdxNotIn" item="item" index="index" separator="," open="(" close=")">#{item}</foreach> AND</if>
+</trim>
+</sql>
+
+<insert id="insert" parameterType="PaymentQueueVO" keyProperty="pqIdx"></insert>
+<insert id="insertNotExist" parameterType="PaymentQueueVO" useGeneratedKeys="true" keyProperty="pqIdx">
+INSERT IGNORE INTO z_payment_queue
+<trim prefix="(" suffix=")" suffixOverrides=",">
+<if test="pqPaymentType != null" >pq_payment_type,</if>
+<if test="pqUniqueId != null" >pq_unique_id,</if>
+<if test="pqTrFlag != null" >pq_tr_flag,</if>
+<if test="pqMbIdx != null" >pq_mb_idx,</if>
+<if test="pqToMbIdx != null" >pq_to_mb_idx,</if>
+<if test="pqToMbId != null" >pq_to_mb_id,</if>
+<if test="pqToMbName != null" >pq_to_mb_name,</if>
+<if test="pqSendFrom != null">pq_send_from,</if>
+<if test="pqSendTo != null">pq_send_to,</if>
+<if test="pqSendMemo != null">pq_send_memo,</if>
+<if test="pqTkIdx != null">pq_tk_idx,</if>
+<if test="pqSymbol != null">pq_symbol,</if>
+<if test="pqState != null">pq_state,</if>
+<if test="pqTxState != null">pq_tx_state,</if>
+<if test="pqAmount != null">pq_amount,</if>
+<if test="pqReqAmount != null">pq_req_amount,</if>
+<if test="pqFee != null">pq_fee,</if>
+<if test="pqBefore != null">pq_before,</if>
+<if test="pqAfter != null">pq_after,</if>
+<if test="pqResultData != null">pq_result_data,</if>
+<if test="pqSequence != null">pq_sequence,</if>
+<if test="pqEtTo != null">pq_et_to,</if>
+<if test="pqEtFrom != null">pq_et_from,</if>
+<if test="pqEtActualTo != null">pq_et_actual_to,</if>
+<if test="pqTimestamp != null">pq_timestamp,</if>
+<if test="pqTxHash != null">pq_tx_hash,</if>
+<if test="pqGasLimit != null">pq_gas_limit,</if>
+<if test="pqGasPrice != null">pq_gas_price,</if>
+<if test="pqNonce != null">pq_nonce,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides=",">
+<if test="pqPaymentType != null" >#{pqPaymentType,jdbcType=TINYINT},</if>
+<if test="pqUniqueId != null" >#{pqUniqueId,jdbcType=VARCHAR},</if>
+<if test="pqTrFlag != null" >#{pqTrFlag,jdbcType=TINYINT},</if>
+<if test="pqMbIdx != null" >#{pqMbIdx,jdbcType=VARCHAR},</if>
+<if test="pqToMbIdx != null" >#{pqToMbIdx,jdbcType=BIGINT},</if>
+<if test="pqToMbId != null" >#{pqToMbId,jdbcType=VARCHAR},</if>
+<if test="pqToMbName != null" >#{pqToMbName,jdbcType=VARCHAR},</if>
+<if test="pqSendFrom != null">#{pqSendFrom,jdbcType=VARCHAR},</if>
+<if test="pqSendTo != null">#{pqSendTo,jdbcType=VARCHAR},</if>
+<if test="pqSendMemo != null">#{pqSendMemo,jdbcType=VARCHAR},</if>
+<if test="pqTkIdx != null">#{pqTkIdx,jdbcType=TINYINT},</if>
+<if test="pqSymbol != null">#{pqSymbol,jdbcType=VARCHAR},</if>
+<if test="pqState != null">#{pqState,jdbcType=TINYINT},</if>
+<if test="pqTxState != null">#{pqTxState,jdbcType=TINYINT},</if>
+<if test="pqAmount != null">#{pqAmount,jdbcType=DECIMAL},</if>
+<if test="pqReqAmount != null">#{pqReqAmount,jdbcType=DECIMAL},</if>
+<if test="pqFee != null">#{pqFee,jdbcType=DECIMAL},</if>
+<if test="pqBefore != null">#{pqBefore,jdbcType=DECIMAL},</if>
+<if test="pqAfter != null">#{pqAfter,jdbcType=DECIMAL},</if>
+<if test="pqResultData != null">#{pqResultData,jdbcType=VARCHAR},</if>
+<if test="pqSequence != null">#{pqSequence,jdbcType=VARCHAR},</if>
+<if test="pqEtTo != null">#{pqEtTo,jdbcType=TINYINT},</if>
+<if test="pqEtFrom != null">#{pqEtFrom,jdbcType=VARCHAR},</if>
+<if test="pqEtActualTo != null">#{pqEtActualTo,jdbcType=VARCHAR},</if>
+<if test="pqTimestamp != null">#{pqTimestamp,jdbcType=VARCHAR},</if>
+<if test="pqTxHash != null">#{pqTxHash,jdbcType=VARCHAR},</if>
+<if test="pqGasLimit != null">#{pqGasLimit,jdbcType=INTEGER},</if>
+<if test="pqGasPrice != null">#{pqGasPrice,jdbcType=BIGINT},</if>
+<if test="pqNonce != null">#{pqNonce,jdbcType=BIGINT},</if>
+</trim>
+</insert>
+
+<insert id="copyToCanceled" parameterType="PaymentQueueVO" >
+INSERT INTO z_payment_queue_canceled
+<trim prefix="(" suffix=")" suffixOverrides=",">
+<if test="pqIdx != null" >pq_idx,</if>
+<if test="pqCreateDate != null" >pq_create_date,</if>
+<if test="pqUpdateDate != null" >pq_update_date,</if>
+<if test="pqPaymentType != null" >pq_payment_type,</if>
+<if test="pqUniqueId != null" >pq_unique_id,</if>
+<if test="pqTrFlag != null" >pq_tr_flag,</if>
+<if test="pqMbIdx != null" >pq_mb_idx,</if>
+<if test="pqToMbIdx != null" >pq_to_mb_idx,</if>
+<if test="pqToMbId != null" >pq_to_mb_id,</if>
+<if test="pqToMbName != null" >pq_to_mb_name,</if>
+<if test="pqSendFrom != null" >pq_send_from,</if>
+<if test="pqSendTo != null" >pq_send_to,</if>
+<if test="pqSendMemo != null" >pq_send_memo,</if>
+<if test="pqTkIdx != null" >pq_tk_idx,</if>
+<if test="pqSymbol != null" >pq_symbol,</if>
+<if test="pqState != null" >pq_state,</if>
+<if test="pqAmount != null" >pq_amount,</if>
+<if test="pqReqAmount != null" >pq_req_amount,</if>
+<if test="pqFee != null" >pq_fee,</if>
+<if test="pqBefore != null" >pq_before,</if>
+<if test="pqAfter != null" >pq_after,</if>
+<if test="pqResultData != null" >pq_result_data,</if>
+<if test="pqSequence != null" >pq_sequence,</if>
+<if test="pqEtTo != null" >pq_et_to,</if>
+<if test="pqEtFrom != null" >pq_et_from,</if>
+<if test="pqEtActualTo != null" >pq_et_actual_to,</if>
+<if test="pqTimestamp != null" >pq_timestamp,</if>
+<if test="pqErrorCount != null" >pq_error_count,</if>
+<if test="pqCkState != null" >pq_ck_state,</if>
+<if test="pqRqDate != null" >pq_rq_date,</if>
+<if test="pqTxState != null" >pq_tx_state,</if>
+<if test="pqTxDate != null" >pq_tx_date,</if>
+<if test="pqRsState != null" >pq_rs_state,</if>
+<if test="pqRsDate != null" >pq_rs_date,</if>
+<if test="pqBlockNumber != null" >pq_block_number,</if>
+<if test="pqTxHash != null" >pq_tx_hash,</if>
+<if test="pqGasLimit != null" >pq_gas_limit,</if>
+<if test="pqGasPrice != null" >pq_gas_price,</if>
+<if test="pqNonce != null" >pq_nonce,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides=",">
+<if test="pqIdx != null" >#{pqIdx,jdbcType=BIGINT},</if>
+<if test="pqCreateDate != null" >#{pqCreateDate,jdbcType=TIMESTAMP},</if>
+<if test="pqUpdateDate != null" >#{pqUpdateDate,jdbcType=TIMESTAMP},</if>
+<if test="pqPaymentType != null" >#{pqPaymentType,jdbcType=TINYINT},</if>
+<if test="pqUniqueId != null" >#{pqUniqueId,jdbcType=VARCHAR},</if>
+<if test="pqTrFlag != null" >#{pqTrFlag,jdbcType=TINYINT},</if>
+<if test="pqMbIdx != null" >#{pqMbIdx,jdbcType=BIGINT},</if>
+<if test="pqToMbIdx != null" >#{pqToMbIdx,jdbcType=BIGINT},</if>
+<if test="pqToMbId != null" >#{pqToMbId,jdbcType=VARCHAR},</if>
+<if test="pqToMbName != null" >#{pqToMbName,jdbcType=VARCHAR},</if>
+<if test="pqSendFrom != null" >#{pqSendFrom,jdbcType=VARCHAR},</if>
+<if test="pqSendTo != null" >#{pqSendTo,jdbcType=VARCHAR},</if>
+<if test="pqSendMemo != null" >#{pqSendMemo,jdbcType=VARCHAR},</if>
+<if test="pqTkIdx != null" >#{pqTkIdx,jdbcType=TINYINT},</if>
+<if test="pqSymbol != null" >#{pqSymbol,jdbcType=VARCHAR},</if>
+<if test="pqState != null" >#{pqState,jdbcType=TINYINT},</if>
+<if test="pqAmount != null" >#{pqAmount,jdbcType=DECIMAL},</if>
+<if test="pqReqAmount != null" >#{pqReqAmount,jdbcType=DECIMAL},</if>
+<if test="pqFee != null" >#{pqFee,jdbcType=DECIMAL},</if>
+<if test="pqBefore != null" >#{pqBefore,jdbcType=DECIMAL},</if>
+<if test="pqAfter != null" >#{pqAfter,jdbcType=DECIMAL},</if>
+<if test="pqResultData != null" >#{pqResultData,jdbcType=VARCHAR},</if>
+<if test="pqSequence != null" >#{pqSequence,jdbcType=VARCHAR},</if>
+<if test="pqEtTo != null" >#{pqEtTo,jdbcType=VARCHAR},</if>
+<if test="pqEtFrom != null" >#{pqEtFrom,jdbcType=VARCHAR},</if>
+<if test="pqEtActualTo != null" >#{pqEtActualTo,jdbcType=VARCHAR},</if>
+<if test="pqTimestamp != null" >#{pqTimestamp,jdbcType=VARCHAR},</if>
+<if test="pqErrorCount != null" >#{pqErrorCount,jdbcType=TINYINT},</if>
+<if test="pqCkState != null" >#{pqCkState,jdbcType=TINYINT},</if>
+<if test="pqRqDate != null" >#{pqRqDate,jdbcType=TIMESTAMP},</if>
+<if test="pqTxState != null" >#{pqTxState,jdbcType=TINYINT},</if>
+<if test="pqTxDate != null" >#{pqTxDate,jdbcType=TIMESTAMP},</if>
+<if test="pqRsState != null" >#{pqRsState,jdbcType=TINYINT},</if>
+<if test="pqRsDate != null" >#{pqRsDate,jdbcType=TIMESTAMP},</if>
+<if test="pqBlockNumber != null" >#{pqBlockNumber,jdbcType=BIGINT},</if>
+<if test="pqTxHash != null" >#{pqTxHash,jdbcType=VARCHAR},</if>
+<if test="pqGasLimit != null" >#{pqGasLimit,jdbcType=VARCHAR},</if>
+<if test="pqGasPrice != null" >#{pqGasPrice,jdbcType=BIGINT},</if>
+<if test="pqNonce != null" >#{pqNonce,jdbcType=BIGINT},</if>
+</trim>
+</insert>
+
+<update id="update" parameterType="PaymentQueueVO">UPDATE z_payment_queue <set>
+<if test="pqBefore != null">pq_before = #{pqBefore,jdbcType=DECIMAL},</if>
+<if test="pqAfter != null">pq_after = #{pqAfter,jdbcType=DECIMAL},</if>
+<if test="pqState != null">pq_update_date = SYSDATE(), pq_state = #{pqState,jdbcType=TINYINT},</if>
+<if test="pqResultData != null">pq_result_data = #{pqResultData,jdbcType=VARCHAR},</if>
+<if test="pqErrorCount != null">pq_error_count = #{pqErrorCount,jdbcType=TINYINT},</if>
+<if test="pqCkState != null">pq_ck_state = #{pqCkState,jdbcType=TINYINT},</if>
+<if test="pqRqDate != null" >pq_rq_date = #{pqRqDate,jdbcType=TIMESTAMP},</if>
+<if test="pqTxState != null">pq_tx_state = #{pqTxState,jdbcType=TINYINT},</if>
+<if test="pqTxDate != null" >pq_tx_date = #{pqTxDate,jdbcType=TIMESTAMP},</if>
+<if test="pqRsState != null">pq_rs_state = #{pqRsState,jdbcType=TINYINT},</if>
+<if test="pqRsDate != null" >pq_rs_date = #{pqRsDate,jdbcType=TIMESTAMP},</if>
+<if test="pqBlockNumber != null">pq_block_number = #{pqBlockNumber,jdbcType=VARCHAR},</if>
+<if test="pqTxHash != null">pq_tx_hash = #{pqTxHash,jdbcType=VARCHAR},</if>
+<if test="pqGasLimit != null">pq_gas_limit = #{pqGasLimit,jdbcType=INTEGER},</if>
+<if test="pqGasPrice != null">pq_gas_price = #{pqGasPrice,jdbcType=BIGINT},</if>
+<if test="pqNonce != null">pq_nonce = #{pqNonce,jdbcType=BIGINT},</if>
+<if test="pqEtTo != null">pq_et_to = #{pqEtTo,jdbcType=VARCHAR},</if>
+<if test="pqEtFrom != null">pq_et_from = #{pqEtFrom,jdbcType=VARCHAR},</if>
+<if test="pqEtActualTo != null">pq_et_actual_to = #{pqEtActualTo,jdbcType=VARCHAR},</if>
+<if test="pqSendFrom != null">pq_send_from = #{pqSendFrom,jdbcType=VARCHAR},</if>
+<if test="pqSendTo != null">pq_send_to = #{pqSendTo,jdbcType=VARCHAR},</if>
+<if test="pqTimestamp != null">pq_timestamp = #{pqTimestamp,jdbcType=VARCHAR},</if>
+</set>
+WHERE pq_idx = #{pqIdx} </update>
+
+<update id="updateWithPriorState" parameterType="hashmap">update z_payment_queue <set>
+<if test="pqAmount != null">pq_amount = #{pqAmount,jdbcType=DECIMAL},</if>
+<if test="pqReqAmount != null">pq_req_amount = #{pqReqAmount,jdbcType=DECIMAL},</if>
+<if test="pqFee != null">pq_fee = #{pqFee,jdbcType=DECIMAL},</if>
+<if test="pqBefore != null">pq_before = #{pqBefore,jdbcType=DECIMAL},</if>
+<if test="pqAfter != null">pq_after = #{pqAfter,jdbcType=DECIMAL},</if>
+<if test="pqState != null">pq_update_date = SYSDATE(), pq_state = #{pqState,jdbcType=TINYINT},</if>
+<if test="pqGasLimit != null">pq_gas_limit = #{pqGasLimit,jdbcType=INTEGER},</if>
+<if test="pqGasPrice != null">pq_gas_price = #{pqGasPrice,jdbcType=BIGINT},</if>
+<if test="pqNonce != null">pq_nonce = #{pqNonce,jdbcType=BIGINT},</if>
+<if test="pqEtTo != null">pq_et_to = #{pqEtTo,jdbcType=VARCHAR},</if>
+<if test="pqEtFrom != null">pq_et_from = #{pqEtFrom,jdbcType=VARCHAR},</if>
+<if test="pqEtActualTo != null">pq_et_actual_to = #{pqEtActualTo,jdbcType=VARCHAR},</if>
+<if test="pqSendFrom != null">pq_send_from = #{pqSendFrom,jdbcType=VARCHAR},</if>
+<if test="pqSendTo != null">pq_send_to = #{pqSendTo,jdbcType=VARCHAR},</if>
+<if test="pqTimestamp != null">pq_timestamp = #{pqTimestamp,jdbcType=VARCHAR},</if>
+<if test="pqResultData != null">pq_result_data = #{pqResultData,jdbcType=VARCHAR},</if>
+</set>
+<where>pq_idx = #{pqIdx,jdbcType=BIGINT} and pq_state = #{pqPriorState,jdbcType=TINYINT} </where> </update>
+
+<update id="resetTransferErrorWithPriorState" parameterType="hashmap">update z_payment_queue
+<set>
+pq_update_date = SYSDATE(), pq_state = 0,
+pq_result_data = NULL,
+pq_tx_state = NULL,
+pq_tx_date = NULL,
+pq_rs_state = NULL,
+pq_rs_date = NULL,
+pq_block_number = NULL,
+pq_tx_hash = NULL
+</set>
+<where>pq_idx = #{pqIdx,jdbcType=BIGINT} and pq_state = #{pqPriorState,jdbcType=TINYINT} </where> </update>
+
+<sql id="JoinTableFrom" >FROM z_payment_queue pq LEFT OUTER JOIN z_token_info tk ON pq.pq_tk_idx = tk.tk_idx LEFT OUTER JOIN z_member mb ON pq.pq_mb_idx = mb.mb_idx</sql>
+
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/>,<include refid="Join_Column_List"/> <include refid="JoinTableFrom"/><where> <include refid="BaseSearchQuery"/> </where> <if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if> <if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if> <if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectByIndex" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/>,<include refid="Join_Column_List"/> <include refid="JoinTableFrom"/> WHERE pq_idx = #{idx} </select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/>,<include refid="Join_Column_List"/> <include refid="JoinTableFrom"/> <if test="orderColumn != null">Order by ${orderColumn} ${order}</if> <if test="limit != null">LIMIT #{limit}</if> </select>
+<select id="countBySearch" parameterType="hashmap" resultType="Long">SELECT COUNT(*) <include refid="JoinTableFrom"/> <where> <include refid="BaseSearchQuery"/> </where> </select>
+<select id="countAll" resultType="Long">SELECT COUNT(*) FROM z_payment_queue </select>
+<delete id="deleteByIndex" parameterType="Long">DELETE FROM z_payment_queue WHERE pq_idx = #{idx} </delete>
+
+
+<select id="selectSumBySearch" parameterType="hashmap" resultMap="SumResultMap">SELECT <include refid="Sum_Column_List"/> FROM z_payment_queue pq  <where> <include refid="BaseSearchQuery"/> </where>  <if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if> <if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if> <if test="limit != null">LIMIT #{limit}</if></select>
+
+<update id="increaseErrorCount" parameterType="hashmap">update z_payment_queue <set> pq_error_count = pq_error_count + 1 </set> <where><trim suffixOverrides="AND"> pq_idx = #{pqIdx,jdbcType=BIGINT} AND 10 > pq_error_count</trim></where></update>
+</mapper>

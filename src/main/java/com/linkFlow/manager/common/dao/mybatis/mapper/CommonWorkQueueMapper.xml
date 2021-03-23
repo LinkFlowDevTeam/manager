@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.CommonWorkQueueDao" >
+<resultMap id="BaseResultMap" type="CommonWorkQueueVO" >
+<id column="wq_idx" property="wqIdx" jdbcType="BIGINT" />
+<result column="wq_target_idx" property="wqTargetIdx" jdbcType="BIGINT" />
+<result column="wq_state" property="wqState" jdbcType="TINYINT" />
+<result column="wq_type" property="wqType" jdbcType="TINYINT" />
+<result column="wq_execute_mode" property="wqExecuteMode" jdbcType="TINYINT" />
+
+<result column="wq_create_date" property="wqCreateDate" jdbcType="TIMESTAMP" />
+<result column="wq_start_date" property="wqStartDate" jdbcType="TIMESTAMP" />
+<result column="wq_finish_date" property="wqFinishDate" jdbcType="TIMESTAMP" />
+
+<result column="wq_data1" property="wqData1" jdbcType="VARCHAR" />
+<result column="wq_data2" property="wqData2" jdbcType="VARCHAR" />
+<result column="wq_data3" property="wqData3" jdbcType="VARCHAR" />
+<result column="wq_data4" property="wqData4" jdbcType="VARCHAR" />
+<result column="wq_data5" property="wqData5" jdbcType="VARCHAR" />
+<result column="wq_text" property="wqText" jdbcType="VARCHAR" />
+</resultMap>
+
+<sql id="Base_Column_List" >wq_idx,wq_target_idx,wq_state,wq_type,wq_execute_mode,wq_create_date,wq_start_date,wq_finish_date,wq_data1,wq_data2,wq_data3,wq_data4,wq_data5,wq_text</sql>
+
+<sql id="BaseSearchQuery">
+<trim suffixOverrides="AND">
+<if test="wqIdx != null">wq_idx = #{wqIdx} AND</if>
+<if test="wqState != null">wq_state = #{wqState} AND</if>
+<if test="wqType != null">wq_type = #{wqType} AND</if>
+<if test="wqExecuteMode != null">wq_execute_mode = #{wqExecuteMode} AND</if>
+<if test="searchStartDate != null and searchStartDate != ''">wq_update_date >= #{searchStartDate} AND</if>
+<if test="searchEndDate != null and searchEndDate != ''">#{searchEndDate} >= wq_update_date AND</if>
+</trim>
+</sql>
+
+<insert id="insert" parameterType="CommonWorkQueueVO" >
+insert into z_common_work_queue
+<trim prefix="(" suffix=")" suffixOverrides="," >
+<if test="wqTargetIdx != null" >wq_target_idx,</if>
+<if test="wqState != null" >wq_state,</if>
+<if test="wqType != null" >wq_type,</if>
+<if test="wqExecuteMode != null" >wq_execute_mode,</if>
+<if test="wqData1 != null" >wq_data1,</if>
+<if test="wqData2 != null" >wq_data2,</if>
+<if test="wqData3 != null" >wq_data3,</if>
+<if test="wqData4 != null" >wq_data4,</if>
+<if test="wqData5 != null" >wq_data5,</if>
+<if test="wqText != null" >wq_text,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides="," >
+<if test="wqTargetIdx != null" >#{wqTargetIdx,jdbcType=BIGINT},</if>
+<if test="wqState != null" >#{wqState,jdbcType=TINYINT},</if>
+<if test="wqType != null" >#{wqType,jdbcType=TINYINT},</if>
+<if test="wqExecuteMode != null" >#{wqExecuteMode,jdbcType=TINYINT},</if>
+<if test="wqData1 != null" >#{wqData1,jdbcType=VARCHAR},</if>
+<if test="wqData2 != null" >#{wqData2,jdbcType=VARCHAR},</if>
+<if test="wqData3 != null" >#{wqData3,jdbcType=VARCHAR},</if>
+<if test="wqData4 != null" >#{wqData4,jdbcType=VARCHAR},</if>
+<if test="wqData5 != null" >#{wqData5,jdbcType=VARCHAR},</if>
+<if test="wqText != null" >#{wqText,jdbcType=VARCHAR},</if>
+</trim>
+</insert>
+
+<update id="update" parameterType="CommonWorkQueueVO" >
+update z_common_work_queue
+<set >
+<if test="wqStartDate != null" >wq_start_date = SYSDATE(),</if>
+<if test="wqFinishDate != null" >wq_finish_date = SYSDATE(),</if>
+<if test="wqState != null" >wq_state = #{wqState,jdbcType=TINYINT},</if>
+<if test="wqData1 != null" >wq_data1 = #{wqData1,jdbcType=VARCHAR},</if>
+<if test="wqData2 != null" >wq_data2 = #{wqData2,jdbcType=VARCHAR},</if>
+<if test="wqData3 != null" >wq_data3 = #{wqData3,jdbcType=VARCHAR},</if>
+<if test="wqData4 != null" >wq_data4 = #{wqData4,jdbcType=VARCHAR},</if>
+<if test="wqData5 != null" >wq_data5 = #{wqData5,jdbcType=VARCHAR},</if>
+<if test="wqText != null" >wq_text = #{wqText,jdbcType=VARCHAR},</if>
+</set>
+where wq_idx = #{wqIdx,jdbcType=BIGINT}
+</update>
+
+<update id="updateStartDate" parameterType="Long">
+UPDATE z_common_work_queue SET wq_start_date = SYSDATE() WHERE wq_idx = #{wqIdx,jdbcType=BIGINT}
+</update>
+
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_common_work_queue <where><include refid="BaseSearchQuery"/></where><if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if><if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="countBySearch" parameterType="hashmap" resultType="Long">SELECT COUNT(*) FROM z_common_work_queue <where><include refid="BaseSearchQuery"/></where></select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_common_work_queue <if test="orderColumn != null"> Order by ${orderColumn} ${order} </if> <if test="limit != null">LIMIT #{limit}</if></select>
+<select id="countAll" resultType="Long">SELECT COUNT(*) FROM z_common_work_queue</select>
+<select id="selectByIndex" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/>FROM z_common_work_queue WHERE wq_idx = #{idx}</select>
+<delete id="deleteByIndex" parameterType="Long">DELETE FROM z_common_work_queue WHERE wq_idx = #{idx}</delete>
+</mapper>

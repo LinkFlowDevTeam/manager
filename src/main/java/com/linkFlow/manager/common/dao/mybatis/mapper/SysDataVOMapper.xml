@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.SysDataDao" >
+
+<resultMap id="BaseResultMap" type="SysDataVO" >
+<id column="ss_idx" property="ssIdx" jdbcType="INTEGER" />
+<result column="ss_erc20_gas_limit" property="ssErc20GasLimit" jdbcType="INTEGER" />
+<result column="ss_erc20_gas_price_percent" property="ssErc20GasPricePercent" jdbcType="INTEGER" />
+<result column="ss_erc20_pending_notice_m" property="ssErc20PendingNoticeM" jdbcType="INTEGER" />
+<result column="ss_lf_token_lock_day" property="ssLfTokenLockDay" jdbcType="INTEGER" />
+<result column="ss_lf_token_deposit_address" property="ssLfTokenDepositAddress" jdbcType="VARCHAR" />
+<result column="ss_product_claim_fee" property="ssProductClaimFee" jdbcType="VARCHAR" />
+<result column="ss_product_purchase_withdraw_address" property="ssProductPurchaseWithdrawAddress" jdbcType="VARCHAR" />
+<result column="ss_gas_fee_address" property="ssGasFeeAddress" jdbcType="VARCHAR" />
+</resultMap>
+
+<resultMap id="ApiResultMap" type="SysDataVOForApi" >
+<result column="ss_lf_token_lock_day" property="ssLfTokenLockDay" jdbcType="INTEGER" />
+<result column="ss_lf_token_deposit_address" property="ssLfTokenDepositAddress" jdbcType="VARCHAR" />
+<result column="ss_product_claim_fee" property="ssProductClaimFee" jdbcType="VARCHAR" />
+</resultMap>
+
+<sql id="Base_Column_List" >ss_idx, ss_erc20_gas_limit, ss_erc20_gas_price_percent, ss_erc20_pending_notice_m,ss_lf_token_lock_day, ss_lf_token_deposit_address,ss_product_claim_fee, ss_product_purchase_withdraw_address,ss_gas_fee_address</sql>
+<sql id="Api_Column_List" >ss_idx, ss_erc20_gas_limit, ss_erc20_gas_price_percent, ss_erc20_pending_notice_m,ss_lf_token_lock_day, ss_lf_token_deposit_address,ss_product_claim_fee, ss_product_purchase_withdraw_address</sql>
+
+<sql id="BaseSearchQuery">
+<trim suffixOverrides="AND">
+<if test="ssIdx != null">ss_idx = #{ssIdx} AND</if>
+</trim>
+</sql>
+
+<insert id="insert" parameterType="SysDataVO" >
+insert into z_sys_data
+<trim prefix="(" suffix=")" suffixOverrides="," >
+<if test="ssIdx != null" >ss_idx,</if>
+<if test="ssErc20GasLimit != null" >ss_erc20_gas_limit,</if>
+<if test="ssErc20GasPricePercent != null" >ss_erc20_gas_price_percent,</if>
+<if test="ssErc20PendingNoticeM != null" >ss_erc20_pending_notice_m,</if>
+<if test="ssLfTokenLockDay != null" >ss_lf_token_lock_day,</if>
+<if test="ssLfTokenDepositAddress != null" >ss_lf_token_deposit_address,</if>
+<if test="ssProductClaimFee != null" >ss_product_claim_fee,</if>
+<if test="ssProductPurchaseWithdrawAddress != null" >ss_product_purchase_withdraw_address,</if>
+<if test="ssGasFeeAddress != null" >ss_gas_fee_address,</if>
+
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides="," >
+<if test="ssIdx != null" >#{ssIdx,jdbcType=INTEGER},</if>
+<if test="ssErc20GasLimit != null" >#{ssErc20GasLimit,jdbcType=INTEGER},</if>
+<if test="ssErc20GasPricePercent != null" >#{ssErc20GasPricePercent,jdbcType=INTEGER},</if>
+<if test="ssErc20PendingNoticeM != null" >#{ssErc20PendingNoticeM,jdbcType=INTEGER},</if>
+<if test="ssLfTokenLockDay != null" >#{ssLfTokenLockDay,jdbcType=INTEGER},</if>
+<if test="ssLfTokenDepositAddress != null" >#{ssLfTokenDepositAddress,jdbcType=VARCHAR},</if>
+<if test="ssProductClaimFee != null" >#{ssProductClaimFee,jdbcType=VARCHAR},</if>
+<if test="ssProductPurchaseWithdrawAddress != null" >#{ssProductPurchaseWithdrawAddress,jdbcType=VARCHAR},</if>
+<if test="ssGasFeeAddress != null" >#{ssGasFeeAddress,jdbcType=VARCHAR},</if>
+</trim>
+</insert>
+<update id="update" parameterType="SysDataVO" >
+update z_sys_data
+<set >
+<if test="ssErc20GasLimit != null" >ss_erc20_gas_limit = #{ssErc20GasLimit,jdbcType=INTEGER},</if>
+<if test="ssErc20GasPricePercent != null" >ss_erc20_gas_price_percent = #{ssErc20GasPricePercent,jdbcType=INTEGER},</if>
+<if test="ssErc20PendingNoticeM != null" >ss_erc20_pending_notice_m = #{ssErc20PendingNoticeM,jdbcType=INTEGER},</if>
+<if test="ssLfTokenLockDay != null" >ss_lf_token_lock_day = #{ssLfTokenLockDay,jdbcType=INTEGER},</if>
+<if test="ssLfTokenDepositAddress != null" >ss_lf_token_deposit_address = #{ssLfTokenDepositAddress,jdbcType=VARCHAR},</if>
+<if test="ssProductClaimFee != null" >ss_product_claim_fee = #{ssProductClaimFee,jdbcType=VARCHAR},</if>
+<if test="ssProductPurchaseWithdrawAddress != null" >ss_product_purchase_withdraw_address = #{ssProductPurchaseWithdrawAddress,jdbcType=VARCHAR},</if>
+<if test="ssGasFeeAddress != null" >ss_gas_fee_address = #{ssGasFeeAddress,jdbcType=VARCHAR},</if>
+</set>
+where ss_idx = #{ssIdx,jdbcType=INTEGER}
+</update>
+
+
+<select id="selectByIndexForApi" parameterType="hashmap" resultMap="ApiResultMap">SELECT <include refid="Api_Column_List"/> FROM z_sys_data WHERE ss_idx = #{idx}</select>
+
+<select id="selectByIndex" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_sys_data WHERE ss_idx = #{idx} </select>
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_sys_data <where> <include refid="BaseSearchQuery"/> </where> <if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if> <if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if> <if test="limit != null">LIMIT #{limit}</if> </select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_sys_data <if test="orderColumn != null"> Order by ${orderColumn} ${order} </if> <if test="limit != null"> LIMIT #{limit} </if> </select>
+<select id="countBySearch" parameterType="hashmap" resultType="Integer">SELECT COUNT(*) FROM z_sys_data <where> <include refid="BaseSearchQuery"/> </where> </select>
+<select id="countAll" resultType="Integer">SELECT COUNT(*) FROM z_sys_data </select>
+<delete id="deleteByIndex" parameterType="Integer">DELETE FROM z_sys_data WHERE ss_idx = #{idx}</delete>
+</mapper>

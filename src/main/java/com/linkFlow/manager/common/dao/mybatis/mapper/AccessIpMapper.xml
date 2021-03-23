@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.AccessIpDao">
+
+<resultMap id="BaseResultMap" type="AccessIpVO">
+<id column="ac_idx" property="acIdx" jdbcType="BIGINT"/>
+<result column="ac_ip" property="acIp" jdbcType="VARCHAR"/>
+<result column="ac_error_count" property="acErrorCount" jdbcType="INTEGER"/>
+<result column="ac_create_date" property="acCreateDate" jdbcType="TIMESTAMP"/>
+<result column="ac_update_date" property="acUpdateDate" jdbcType="TIMESTAMP"/>
+</resultMap>
+
+<sql id="Base_Column_List">ac_idx, ac_ip, ac_error_count, ac_create_date, ac_update_date</sql>
+
+<sql id="BaseSearchQuery">
+<trim suffixOverrides="AND">
+<if test="acIdx != null">ac_idx = #{acIdx} AND</if>
+<if test="acIp != null">ac_ip = #{acIp} AND</if>
+</trim>
+</sql>
+
+<insert id="insert" parameterType="AccessIpVO" keyProperty="acIdx"></insert>
+<insert id="insertNotExist" parameterType="AccessIpVO" keyProperty="acIdx">
+INSERT IGNORE z_access_ip
+<trim prefix="(" suffix=")" suffixOverrides=",">
+<if test="acErrorCount != null">ac_error_count,</if>
+<if test="acIp != null">ac_ip,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides=",">
+<if test="acErrorCount != null">#{acErrorCount,jdbcType=INTEGER},</if>
+<if test="acIp != null">#{acIp,jdbcType=VARCHAR},</if>
+</trim>
+</insert>
+
+<select id="selectByIp" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_access_ip WHERE ac_ip = #{ip} </select>
+<select id="selectByIndex" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_access_ip WHERE ac_idx = #{idx} </select>
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_access_ip <where> <include refid="BaseSearchQuery"/> </where> <if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if> <if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if> <if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_access_ip <if test="orderColumn != null"> Order by ${orderColumn} ${order} </if> <if test="limit != null"> LIMIT #{limit} </if> </select>
+<select id="countBySearch" parameterType="hashmap" resultType="Long">SELECT COUNT(*) FROM z_access_ip <where> <include refid="BaseSearchQuery"/></where></select>
+<select id="countAll" resultType="Long">SELECT COUNT(*) FROM z_access_ip </select>
+<update id="update" parameterType="AccessIpVO">
+UPDATE z_access_ip
+<set>
+ac_update_date = SYSDATE(),
+<if test="acErrorCount != null">ac_error_count = #{acErrorCount,jdbcType=INTEGER},</if>
+</set>
+WHERE ac_idx = #{acIdx}
+</update>
+
+<update id="increaseErrorCount" parameterType="hashmap">UPDATE z_access_ip <set> ac_update_date = SYSDATE(), ac_error_count = ac_error_count + 1 </set><where>ac_idx = #{acIdx,jdbcType=BIGINT} and #{maxErrorCount} > ac_error_count</where></update>
+<update id="decreaseErrorCount" parameterType="hashmap">UPDATE z_access_ip <set>ac_update_date = SYSDATE(), ac_error_count = ac_error_count - 1</set><where>ac_idx = #{acIdx,jdbcType=BIGINT} and ac_error_count > 0</where></update>
+<update id="resetErrorCount" parameterType="hashmap">UPDATE z_access_ip <set> ac_update_date = SYSDATE(), ac_error_count = 0 </set> <where> ac_idx = #{acIdx,jdbcType=BIGINT}</where></update>
+
+<delete id="deleteByIndex" parameterType="Long">DELETE FROM z_access_ip WHERE ac_idx = #{idx} </delete>
+</mapper>

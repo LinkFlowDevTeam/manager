@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.TrExtraDao" >
+
+<resultMap id="BaseResultMap" type="TrExtraVO" >
+<id column="et_idx" property="etIdx" jdbcType="BIGINT" />
+<result column="et_tr_idx" property="etTrIdx" jdbcType="BIGINT" />
+<result column="et_data1" property="etData1" jdbcType="VARCHAR" />
+<result column="et_data2" property="etData2" jdbcType="VARCHAR" />
+<result column="et_data3" property="etData3" jdbcType="VARCHAR" />
+<result column="et_data4" property="etData4" jdbcType="VARCHAR" />
+<result column="et_data5" property="etData5" jdbcType="VARCHAR" />
+<result column="et_data6" property="etData6" jdbcType="VARCHAR" />
+</resultMap>
+
+<sql id="Base_Column_List" >t_idx, et_tr_idx,et_data1, et_data2, et_data3, et_data4, et_data5, et_data6</sql>
+
+<sql id="BaseSearchQuery">
+<trim suffixOverrides="AND">
+<if test="etIdx != null">et_idx = #{etIdx} AND</if>
+<if test="etTrIdx != null">et_tr_idx = #{etTrIdx} AND</if>
+</trim>
+</sql>
+
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_tr_extra <where><include refid="BaseSearchQuery"/></where><if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if><if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="countBySearch" parameterType="hashmap" resultType="Integer">SELECT COUNT(*) FROM z_tr_extra <where><include refid="BaseSearchQuery"/></where></select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_tr_extra <if test="orderColumn != null"> Order by ${orderColumn} ${order} </if> <if test="limit != null">LIMIT #{limit}</if></select>
+<select id="countAll" resultType="Integer">SELECT COUNT(*) FROM z_tr_extra</select>
+<select id="selectByIndex" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/>FROM z_tr_extra WHERE et_idx = #{index}</select>
+<delete id="deleteByIndex" parameterType="Integer">DELETE FROM z_tr_extra WHERE et_idx = #{index}</delete>
+
+<insert id="insert" parameterType="TrExtraVO" >
+insert into z_tr_extra
+<trim prefix="(" suffix=")" suffixOverrides="," >
+<if test="etTrIdx != null" >et_tr_idx,</if>
+<if test="etData1 != null" >et_data1,</if>
+<if test="etData2 != null" >et_data2,</if>
+<if test="etData3 != null" >et_data3,</if>
+<if test="etData4 != null" >et_data4,</if>
+<if test="etData5 != null" >et_data5,</if>
+<if test="etData6 != null" >et_data6,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides="," >
+<if test="etTrIdx != null" >#{etTrIdx,jdbcType=BIGINT},</if>
+<if test="etData1 != null" >#{etData1,jdbcType=VARCHAR},</if>
+<if test="etData2 != null" >#{etData2,jdbcType=VARCHAR},</if>
+<if test="etData3 != null" >#{etData3,jdbcType=VARCHAR},</if>
+<if test="etData4 != null" >#{etData4,jdbcType=VARCHAR},</if>
+<if test="etData5 != null" >#{etData5,jdbcType=VARCHAR},</if>
+<if test="etData6 != null" >#{etData6,jdbcType=VARCHAR},</if>
+</trim>
+</insert>
+<update id="update" parameterType="TrExtraVO" >
+update z_tr_extra
+<set >
+<if test="etData1 != null" >et_data1 = #{etData1,jdbcType=VARCHAR},</if>
+<if test="etData2 != null" >et_data2 = #{etData2,jdbcType=VARCHAR},</if>
+<if test="etData3 != null" >et_data3 = #{etData3,jdbcType=VARCHAR},</if>
+<if test="etData4 != null" >et_data4 = #{etData4,jdbcType=VARCHAR},</if>
+<if test="etData5 != null" >et_data5 = #{etData5,jdbcType=VARCHAR},</if>
+<if test="etData6 != null" >et_data6 = #{etData6,jdbcType=VARCHAR},</if>
+</set>
+where et_idx = #{etIdx,jdbcType=BIGINT}
+</update>
+</mapper>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.Erc20QueueDao" >
+<resultMap id="BaseResultMap" type="Erc20QueueVO" >
+<id column="eq_idx" property="eqIdx" jdbcType="BIGINT" />
+<result column="eq_create_date" property="eqCreateDate" jdbcType="TIMESTAMP" />
+<result column="eq_response_date" property="eqResponseDate" jdbcType="TIMESTAMP" />
+<result column="eq_update_date" property="eqUpdateDate" jdbcType="TIMESTAMP" />
+<result column="eq_state" property="eqState" jdbcType="TINYINT" />
+<result column="eq_io" property="eqIo" jdbcType="TINYINT" />
+<result column="eq_nonce" property="eqNonce" jdbcType="BIGINT" />
+<result column="eq_gas_limit" property="eqGasLimit" jdbcType="BIGINT" />
+<result column="eq_gas_price" property="eqGasPrice" jdbcType="BIGINT" />
+<result column="eq_block_number" property="eqBlockNumber" jdbcType="BIGINT" />
+<result column="eq_block_string" property="eqBlockString" jdbcType="VARCHAR" />
+<result column="eq_block_hash" property="eqBlockHash" jdbcType="VARCHAR" />
+<result column="eq_contract_address" property="eqContractAddress" jdbcType="VARCHAR" />
+<result column="eq_from" property="eqFrom" jdbcType="VARCHAR" />
+<result column="eq_to" property="eqTo" jdbcType="VARCHAR" />
+<result column="eq_amount" property="eqAmount" jdbcType="DECIMAL" />
+<result column="eq_tx_hash" property="eqTxHash" jdbcType="VARCHAR" />
+<result column="eq_tk_idx" property="eqTkIdx" jdbcType="INTEGER" />
+<result column="eq_symbol" property="eqSymbol" jdbcType="VARCHAR" />
+<result column="eq_extra_message" property="eqExtraMessage" jdbcType="LONGVARCHAR" />
+<result column="eq_status" property="eqStatus" jdbcType="VARCHAR" />
+<result column="eq_gas_used" property="eqGasUsed" jdbcType="VARCHAR" />
+<result column="eq_mb_idx" property="eqMbIdx" jdbcType="BIGINT" />
+<result column="eq_chain_state" property="eqChainState" jdbcType="TINYINT" />
+<result column="eq_chain_message" property="eqChainMessage" jdbcType="VARCHAR" />
+
+<association property="memberVO" javaType="MemberVO" column="mb_idx" autoMapping="true" />
+</resultMap>
+
+<sql id="Base_Column_List" >eq_idx, eq_create_date, eq_response_date, eq_update_date, eq_state, eq_io,eq_nonce, eq_gas_limit,eq_gas_price,eq_block_number, eq_block_string, eq_block_hash, eq_contract_address, eq_from, eq_to,eq_amount, eq_tx_hash, eq_tk_idx, eq_symbol,eq_extra_message, eq_status, eq_gas_used,eq_mb_idx,eq_chain_state,eq_chain_message</sql>
+<sql id="Join_Column_List" >mb.*</sql>
+
+<sql id="BaseSearchQuery">
+<trim suffixOverrides="AND">
+<if test="searchColumn != null and search != ''">
+<if test="searchColumn == 'all'">
+(eq_tx_hash = #{search} OR
+eq_from = #{search} OR
+eq_to = #{search} OR
+mb_id = #{search} OR
+mb_phone = #{search} OR
+mb_email = #{search} OR
+eq_block_hash = #{search}) AND
+</if>
+</if>
+<if test="eqIdx != null">eq_idx = #{eqIdx} AND</if>
+<if test="eqState != null">eq_state = #{eqState} AND</if>
+<if test="eqIo != null">eq_io = #{eqIo} AND</if>
+<if test="eqStatus != null">eq_status = #{eqStatus} AND</if>
+<if test="eqContractAddress != null">eq_contract_address = #{eqContractAddress} AND</if>
+<if test="eqFrom != null">eq_from = #{eqFrom} AND</if>
+<if test="eqTo != null">eq_to = #{eqTo} AND</if>
+<if test="eqNonce != null">eq_nonce = #{eqNonce} AND</if>
+<if test="eqTxHash != null">eq_tx_hash = #{eqTxHash} AND</if>
+<if test="eqBlockHash != null">eq_block_hash = #{eqBlockHash} AND</if>
+<if test="eqBlockString != null">eq_block_string = #{eqBlockString} AND</if>
+<if test="eqBlockNumber != null">eq_block_number = #{eqBlockNumber} AND</if>
+<if test="eqTkIdx != null">eq_tk_idx = #{eqTkIdx} AND</if>
+<if test="eqSymbol != null">eq_symbol = #{eqSymbol} AND</if>
+<if test="searchStartDate != null and searchStartDate != ''">eq_create_date >= #{searchStartDate} AND</if>
+<if test="searchEndDate != null and searchEndDate != ''">#{searchEndDate} >= eq_create_date AND</if>
+<if test="searchSecond != null and searchSecond != ''">DATE_SUB(SYSDATE(), INTERVAL ${searchSecond} SECOND) >= eq_create_date AND</if>
+<if test="etStateList != null">eq_state IN <foreach collection="etStateList" item="item" index="index" separator="," open="(" close=")">#{item} </foreach> AND </if>
+<if test="eqMbIdx != null">eq_mb_idx = #{eqMbIdx} AND</if>
+<if test="eqChainState != null">eq_chain_state = #{eqChainState} AND</if>
+</trim>
+</sql>
+
+<insert id="insert" parameterType="Erc20QueueVO" useGeneratedKeys="true" keyProperty="eqIdx">
+insert into z_erc20_queue
+<trim prefix="(" suffix=")" suffixOverrides="," >
+<if test="eqIdx != null" >eq_idx,</if>
+<if test="eqCreateDate != null" >eq_create_date,</if>
+<if test="eqResponseDate != null" >eq_response_date,</if>
+<if test="eqUpdateDate != null" >eq_update_date,</if>
+<if test="eqState != null" >eq_state,</if>
+<if test="eqIo != null" >eq_io,</if>
+<if test="eqNonce != null" >eq_nonce,</if>
+<if test="eqGasLimit != null" >eq_gas_limit,</if>
+<if test="eqGasPrice != null" >eq_gas_price,</if>
+<if test="eqBlockNumber != null" >eq_block_number,</if>
+<if test="eqBlockString != null" >eq_block_string,</if>
+<if test="eqBlockHash != null" >eq_block_hash,</if>
+<if test="eqContractAddress != null" >eq_contract_address,</if>
+<if test="eqFrom != null" >eq_from,</if>
+<if test="eqTo != null" >eq_to,</if>
+<if test="eqAmount != null" >eq_amount,</if>
+<if test="eqTxHash != null" >eq_tx_hash,</if>
+<if test="eqTkIdx != null" >eq_tk_idx,</if>
+<if test="eqSymbol != null" >eq_symbol,</if>
+<if test="eqExtraMessage != null" >eq_extra_message,</if>
+<if test="eqMbIdx != null" >eq_mb_idx,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides="," >
+<if test="eqIdx != null" >#{eqIdx,jdbcType=BIGINT},</if>
+<if test="eqCreateDate != null" >#{eqCreateDate,jdbcType=TIMESTAMP},</if>
+<if test="eqResponseDate != null" >#{eqResponseDate,jdbcType=TIMESTAMP},</if>
+<if test="eqUpdateDate != null" >#{eqUpdateDate,jdbcType=TIMESTAMP},</if>
+<if test="eqState != null" >#{eqState,jdbcType=TINYINT},</if>
+<if test="eqIo != null" >#{eqIo,jdbcType=TINYINT},</if>
+<if test="eqNonce != null" >#{eqNonce,jdbcType=BIGINT},</if>
+<if test="eqGasLimit != null" >#{eqGasLimit,jdbcType=BIGINT},</if>
+<if test="eqGasPrice != null" >#{eqGasPrice,jdbcType=BIGINT},</if>
+<if test="eqBlockNumber != null" >#{eqBlockNumber,jdbcType=BIGINT},</if>
+<if test="eqBlockString != null" >#{eqBlockString,jdbcType=VARCHAR},</if>
+<if test="eqBlockHash != null" >#{eqBlockHash,jdbcType=VARCHAR},</if>
+<if test="eqContractAddress != null" >#{eqContractAddress,jdbcType=VARCHAR},</if>
+<if test="eqFrom != null" >#{eqFrom,jdbcType=VARCHAR},</if>
+<if test="eqTo != null" >#{eqTo,jdbcType=VARCHAR},</if>
+<if test="eqAmount != null" >#{eqAmount,jdbcType=DECIMAL},</if>
+<if test="eqTxHash != null" >#{eqTxHash,jdbcType=VARCHAR},</if>
+<if test="eqTkIdx != null" >#{eqTkIdx,jdbcType=INTEGER},</if>
+<if test="eqSymbol != null" >#{eqSymbol,jdbcType=VARCHAR},</if>
+<if test="eqExtraMessage != null" >#{eqExtraMessage,jdbcType=LONGVARCHAR},</if>
+<if test="eqMbIdx != null" >#{eqMbIdx,jdbcType=BIGINT},</if>
+</trim>
+</insert>
+
+<update id="update" parameterType="Erc20QueueVO" >
+update z_erc20_queue
+<set >
+<if test="eqCreateDate != null" >eq_create_date = #{eqCreateDate,jdbcType=TIMESTAMP},</if>
+<if test="eqResponseDate != null" >eq_response_date = #{eqResponseDate,jdbcType=TIMESTAMP},</if>
+<if test="eqUpdateDate != null" >eq_update_date = #{eqUpdateDate,jdbcType=TIMESTAMP},</if>
+<if test="eqState != null" >eq_state = #{eqState,jdbcType=TINYINT},</if>
+<if test="eqNonce != null" >eq_nonce = #{eqNonce,jdbcType=BIGINT},</if>
+<if test="eqGasLimit != null" >eq_gas_limit = #{eqGasLimit,jdbcType=BIGINT},</if>
+<if test="eqGasPrice != null" >eq_gas_price = #{eqGasPrice,jdbcType=BIGINT},</if>
+<if test="eqBlockNumber != null" >eq_block_number = #{eqBlockNumber,jdbcType=BIGINT},</if>
+<if test="eqBlockString != null" >eq_block_string = #{eqBlockString,jdbcType=VARCHAR},</if>
+<if test="eqBlockHash != null" >eq_block_hash = #{eqBlockHash,jdbcType=VARCHAR},</if>
+<if test="eqContractAddress != null" >eq_contract_address = #{eqContractAddress,jdbcType=VARCHAR},</if>
+<if test="eqFrom != null" >eq_from = #{eqFrom,jdbcType=VARCHAR},</if>
+<if test="eqTo != null" >eq_to = #{eqTo,jdbcType=VARCHAR},</if>
+<if test="eqAmount != null" >eq_amount = #{eqAmount,jdbcType=DECIMAL},</if>
+<if test="eqTxHash != null" >eq_tx_hash = #{eqTxHash,jdbcType=VARCHAR},</if>
+<if test="eqTkIdx != null" >eq_tk_idx = #{eqTkIdx,jdbcType=INTEGER},</if>
+<if test="eqSymbol != null" >eq_symbol = #{eqSymbol,jdbcType=VARCHAR},</if>
+<if test="eqExtraMessage != null" >eq_extra_message = #{eqExtraMessage,jdbcType=LONGVARCHAR},</if>
+<if test="eqStatus != null" >eq_status = #{eqStatus,jdbcType=VARCHAR},</if>
+<if test="eqGasUsed != null" >eq_gas_used = #{eqGasUsed,jdbcType=VARCHAR},</if>
+<if test="eqChainState != null" >eq_chain_state = #{eqChainState,jdbcType=TINYINT},</if>
+<if test="eqChainMessage != null" >eq_chain_message = #{eqChainMessage,jdbcType=VARCHAR},</if>
+</set>
+where eq_idx = #{eqIdx,jdbcType=BIGINT}
+</update>
+
+<sql id="JoinTableFrom" >FROM z_erc20_queue eq LEFT OUTER JOIN z_member mb ON eq.eq_mb_idx = mb.mb_idx</sql>
+
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/>,<include refid="Join_Column_List"/> <include refid="JoinTableFrom"/> <where><include refid="BaseSearchQuery"/></where><if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if><if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectByIndex" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/>,<include refid="Join_Column_List"/> <include refid="JoinTableFrom"/> WHERE eq_idx = #{idx}</select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/>,<include refid="Join_Column_List"/> <include refid="JoinTableFrom"/><if test="orderColumn != null"> Order by ${orderColumn} ${order} </if> <if test="limit != null">LIMIT #{limit}</if></select>
+<select id="countBySearch" parameterType="hashmap" resultType="Long">SELECT COUNT(*) <include refid="JoinTableFrom"/> <where><include refid="BaseSearchQuery"/></where></select>
+<select id="countAll" resultType="Long">SELECT COUNT(*) FROM z_erc20_queue</select>
+
+<delete id="deleteByIndex" parameterType="Long">DELETE FROM z_erc20_queue WHERE eq_idx = #{idx}</delete>
+</mapper>

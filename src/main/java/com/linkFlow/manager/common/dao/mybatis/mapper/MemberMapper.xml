@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.MemberDao">
+
+<resultMap id="BaseResultMap" type="MemberVO">
+<id column="mb_idx" property="mbIdx" jdbcType="BIGINT"/>
+<result column="mb_id" property="mbId" jdbcType="VARCHAR"/>
+<result column="mb_tier" property="mbTier" jdbcType="INTEGER"/>
+<result column="mb_rate" property="mbRate" jdbcType="VARCHAR"/>
+<result column="mb_error_count" property="mbErrorCount" jdbcType="INTEGER"/>
+<result column="mb_create_date" property="mbCreateDate" jdbcType="TIMESTAMP"/>
+<result column="mb_update_date" property="mbUpdateDate" jdbcType="TIMESTAMP"/>
+</resultMap>
+
+<resultMap id="ApiResultMap" type="MemberVOForApi">
+<result column="mb_id" property="id" jdbcType="VARCHAR"/>
+<result column="mb_tier" property="tier" jdbcType="INTEGER"/>
+<result column="mb_rate" property="mbRate" jdbcType="VARCHAR"/>
+<result column="mb_create_date" property="createDate" jdbcType="TIMESTAMP"/>
+</resultMap>
+
+<sql id="Base_Column_List">mb_idx,mb_id,mb_tier,mb_rate,mb_error_count,mb_create_date,mb_update_date</sql>
+<sql id="Api_Column_List">mb_idx,mb_id,mb_tier,mb_rate,mb_create_date</sql>
+
+<sql id="Join_CommonSnapshot_Column_List">cs.*</sql>
+
+<sql id="JoinCommonSnapshotTable" > LEFT OUTER JOIN z_common_snapshot cs ON cs.cs_target_idx = hi.mb_idx </sql>
+
+
+<sql id="Base_Search_Query">
+<trim suffixOverrides="AND">
+<if test="queryColumn != null and search != ''">
+<if test="queryColumn == 'all'">
+(mb_id = #{search} ) AND
+</if>
+<if test="queryColumn == 'id'">mb_id LIKE CONCAT(#{search}, '%') AND</if>
+</if>
+<if test="mbIdx != null">mb_idx = #{mbIdx} AND</if>
+<if test="mbId != null">mb_id = #{mbId} AND</if>
+<if test="mbErrorCountOver != null">mb_error_count >= #{mbErrorCountOver} AND</if>
+<if test="mbIdxList != null">mb_idx IN <foreach collection="mbIdxList" item="item" index="index" separator="," open="(" close=")">#{item}</foreach> AND</if>
+<if test="mbCreateDateUnder != null">#{mbCreateDateUnder} >= mb_create_date AND</if>
+<if test="mbCreateDateOver != null">mb_create_date >= #{mbCreateDateOver} AND</if>
+</trim>
+</sql>
+
+<insert id="insert" parameterType="MemberVO" useGeneratedKeys="true" keyProperty="mbIdx">
+INSERT INTO z_member
+<trim prefix="(" suffix=")" suffixOverrides=",">
+<if test="mbId != null">mb_id,</if>
+<if test="mbTier != null">mb_tier,</if>
+<if test="mbRate != null">mb_rate,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides=",">
+<if test="mbId != null">#{mbId,jdbcType=VARCHAR},</if>
+<if test="mbTier != null">#{mbTier,jdbcType=INTEGER},</if>
+<if test="mbRate != null">#{mbRate,jdbcType=VARCHAR},</if>
+</trim>
+</insert>
+
+<select id="selectByIndex" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_member WHERE mb_idx = #{idx} </select>
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_member <where><include refid="Base_Search_Query"/></where><if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if><if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectBySearchForApi" parameterType="hashmap" resultMap="ApiResultMap">SELECT <include refid="Api_Column_List"/> FROM z_member <where><include refid="Base_Search_Query"/></where><if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if><if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_member</select>
+<select id="countBySearch" parameterType="hashmap" resultType="Long">SELECT COUNT(*) FROM z_member <where><include refid="Base_Search_Query"/></where></select>
+<select id="countAll" resultType="Long">SELECT COUNT(*) FROM z_member</select>
+
+<update id="update" parameterType="MemberVO">
+UPDATE z_member
+<set>
+mb_update_date = SYSDATE(),
+<if test="mbTier != null">mb_tier = #{mbTier,jdbcType=INTEGER},</if>
+<if test="mbRate != null">mb_rate = #{mbRate,jdbcType=VARCHAR},</if>
+<if test="mbErrorCount != null">mb_error_count = #{mbErrorCount,jdbcType=INTEGER},</if>
+</set>
+WHERE mb_idx = #{mbIdx,jdbcType=BIGINT}
+</update>
+
+<update id="increaseErrorCount" parameterType="hashmap">UPDATE z_member <set> mb_update_date = SYSDATE(), mb_error_count = mb_error_count + 1 </set><where>mb_idx = #{mbIdx,jdbcType=BIGINT} and #{maxErrorCount} > mb_error_count</where></update>
+<update id="decreaseErrorCount" parameterType="hashmap">UPDATE z_member <set>mb_update_date = SYSDATE(), mb_error_count = mb_error_count - 1</set><where>mb_idx = #{mbIdx,jdbcType=BIGINT} and mb_error_count > 0</where></update>
+<update id="resetErrorCount" parameterType="hashmap">UPDATE z_member <set> mb_update_date = SYSDATE(), mb_error_count = 0 </set> <where> mb_idx = #{mbIdx,jdbcType=BIGINT}</where></update>
+
+</mapper>

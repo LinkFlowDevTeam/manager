@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.NoticeDao">
+
+
+<resultMap id="BaseResultMap" type="NoticeVO">
+<id column="nt_idx" property="ntIdx" jdbcType="BIGINT"/>
+
+<result column="nt_state" property="ntState" jdbcType="TINYINT"/>
+<result column="nt_create_date" property="ntCreateDate" jdbcType="TIMESTAMP"/>
+
+<result column="nt_title" property="ntTitle" jdbcType="VARCHAR"/>
+<result column="nt_sub_title" property="ntSubTitle" jdbcType="VARCHAR"/>
+<result column="nt_message" property="ntMessage" jdbcType="VARCHAR"/>
+<result column="nt_order" property="ntOrder" jdbcType="INTEGER"/>
+</resultMap>
+
+<resultMap id="ApiResultMap" type="NoticeVOForApi">
+<id column="nt_idx" property="idx" jdbcType="BIGINT"/>
+<result column="nt_create_date" property="createDate" jdbcType="TIMESTAMP"/>
+<result column="nt_title" property="title" jdbcType="VARCHAR"/>
+<result column="nt_sub_title" property="subTitle" jdbcType="VARCHAR"/>
+<result column="nt_message" property="message" jdbcType="VARCHAR"/>
+</resultMap>
+
+<sql id="Base_Column_List">nt_idx, nt_state, nt_create_date, nt_title, nt_sub_title, nt_message, nt_order</sql>
+<sql id="Api_Column_List">nt_idx, nt_create_date, nt_title, nt_sub_title, nt_message</sql>
+
+<sql id="BaseSearchQuery">
+<trim suffixOverrides="AND">
+<if test="ntIdx != null">nt_idx = #{ntIdx} AND</if>
+<if test="ntTitle != null">nt_title = #{ntTitle} AND</if>
+<if test="ntState != null">nt_state = #{ntState} AND</if>
+</trim>
+</sql>
+
+<insert id="insert" parameterType="NoticeVO" useGeneratedKeys="true" keyProperty="ntIdx">
+INSERT INTO z_notice
+<trim prefix="(" suffix=")" suffixOverrides=",">
+<if test="ntState != null">nt_state,</if>
+<if test="ntTitle != null">nt_title,</if>
+<if test="ntSubTitle != null">nt_sub_title,</if>
+<if test="ntMessage != null">nt_message,</if>
+<if test="ntOrder != null">nt_order,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides=",">
+<if test="ntState != null">#{ntState,jdbcType=TINYINT},</if>
+<if test="ntTitle != null">#{ntTitle,jdbcType=VARCHAR},</if>
+<if test="ntSubTitle != null">#{ntSubTitle,jdbcType=VARCHAR},</if>
+<if test="ntMessage != null">#{ntMessage,jdbcType=VARCHAR},</if>
+<if test="ntOrder != null">#{ntOrder,jdbcType=INTEGER},</if>
+</trim>
+</insert>
+
+<select id="selectBySearchForApi" parameterType="hashmap" resultMap="ApiResultMap">SELECT <include refid="Api_Column_List"/> FROM z_notice <where> <include refid="BaseSearchQuery"/> </where> <if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if> <if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if> <if test="limit != null">LIMIT #{limit}</if></select>
+
+<select id="selectByIndex" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_notice WHERE nt_idx = #{idx} </select>
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_notice <where> <include refid="BaseSearchQuery"/> </where> <if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if> <if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if> <if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_notice <if test="orderColumn != null"> Order by ${orderColumn} ${order} </if> <if test="limit != null"> LIMIT #{limit} </if> </select>
+<select id="countBySearch" parameterType="hashmap" resultType="Long">SELECT COUNT(*) FROM z_notice <where> <include refid="BaseSearchQuery"/></where></select>
+<select id="countAll" resultType="Long">SELECT COUNT(*) FROM z_notice </select>
+<update id="update" parameterType="NoticeVO">
+UPDATE z_notice
+<set>
+<if test="ntState != null">nt_state = #{ntState,jdbcType=TINYINT},</if>
+<if test="ntTitle != null">nt_title = #{ntTitle,jdbcType=VARCHAR},</if>
+<if test="ntSubTitle != null">nt_sub_title = #{ntSubTitle,jdbcType=VARCHAR},</if>
+<if test="ntMessage != null">nt_message = #{ntMessage,jdbcType=VARCHAR},</if>
+<if test="ntOrder != null">nt_order = #{ntOrder,jdbcType=INTEGER},</if>
+</set>
+WHERE nt_idx = #{ntIdx}
+</update>
+
+<delete id="deleteByIndex" parameterType="Long">DELETE FROM z_notice WHERE nt_idx = #{idx} </delete>
+</mapper>

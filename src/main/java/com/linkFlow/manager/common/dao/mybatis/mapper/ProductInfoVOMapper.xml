@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.ProductInfoDao">
+
+<resultMap id="BaseResultMap" type="ProductInfoVO" >
+<id column="pd_idx" property="pdIdx" jdbcType="INTEGER" />
+<result column="pd_order" property="pdOrder" jdbcType="INTEGER" />
+<result column="pd_tk_idx" property="pdTkIdx" jdbcType="INTEGER" />
+<result column="pd_tk_symbol" property="pdTkSymbol" jdbcType="VARCHAR" />
+<result column="pd_type" property="pdType" jdbcType="VARCHAR" />
+<result column="pd_name" property="pdName" jdbcType="VARCHAR" />
+<result column="pd_detail" property="pdDetail" jdbcType="LONGVARCHAR" />
+<result column="pd_state" property="pdState" jdbcType="TINYINT" />
+<result column="pd_block_state" property="pdBlockState" jdbcType="TINYINT" />
+<result column="pd_create_date" property="pdCreateDate" jdbcType="TIMESTAMP" />
+<result column="pd_update_date" property="pdUpdateDate" jdbcType="TIMESTAMP" />
+<result column="pd_start_date" property="pdStartDate" jdbcType="TIMESTAMP" />
+<result column="pd_expire_date" property="pdExpireDate" jdbcType="TIMESTAMP" />
+<result column="pd_interest_date" property="pdInterestDate" jdbcType="TIMESTAMP" />
+<result column="pd_day" property="pdDay" jdbcType="INTEGER" />
+<result column="pd_min_amount" property="pdMinAmount" jdbcType="BIGINT" />
+<result column="pd_limit_amount" property="pdLimitAmount" jdbcType="BIGINT" />
+<result column="pd_base_amount" property="pdBaseAmount" jdbcType="DECIMAL" />
+<result column="pd_current_interest" property="pdCurrentInterest" jdbcType="DECIMAL" />
+<result column="pd_interest_rate" property="pdInterestRate" jdbcType="VARCHAR" />
+<result column="pd_erc20_address" property="pdErc20Address" jdbcType="VARCHAR" />
+<result column="pd_eth_point" property="pdEthPoint" jdbcType="DECIMAL" />
+<result column="pd_erc20_point" property="pdErc20Point" jdbcType="DECIMAL" />
+<result column="pd_erc20_cached" property="pdErc20Cached" jdbcType="DECIMAL" />
+<result column="pd_erc20_cached_date" property="pdErc20CachedDate" jdbcType="TIMESTAMP" />
+<result column="pd_erc20_state" property="pdErc20State" jdbcType="TINYINT" />
+
+<result column="pd_erc20_key" property="pdErc20Key" jdbcType="LONGVARCHAR" />
+
+<association property="tokenInfoVO" javaType="TokenInfoVO" column="tk_idx" autoMapping="true" />
+</resultMap>
+
+<resultMap id="ApiResultMap" type="ProductInfoVOForApi" >
+<id column="pd_idx" property="productId" jdbcType="INTEGER" />
+<result column="pd_order" property="order" jdbcType="INTEGER" />
+
+<result column="pd_tk_symbol" property="symbol" jdbcType="VARCHAR" />
+<result column="pd_type" property="type" jdbcType="VARCHAR" />
+<result column="pd_name" property="name" jdbcType="VARCHAR" />
+<result column="pd_detail" property="detail" jdbcType="LONGVARCHAR" />
+<result column="pd_state" property="state" jdbcType="TINYINT" />
+
+
+<result column="pd_start_date" property="startDate" jdbcType="TIMESTAMP" />
+<result column="pd_expire_date" property="expireDate" jdbcType="TIMESTAMP" />
+<result column="pd_day" property="day" jdbcType="INTEGER" />
+<result column="pd_min_amount" property="minAmount" jdbcType="BIGINT" />
+<result column="pd_limit_amount" property="limitAmount" jdbcType="BIGINT" />
+<result column="pd_base_amount" property="baseAmount" jdbcType="DECIMAL" />
+<result column="pd_current_interest" property="currentInterest" jdbcType="DECIMAL" />
+<result column="pd_interest_rate" property="interestRate" jdbcType="VARCHAR" />
+<result column="pd_erc20_address" property="erc20Address" jdbcType="VARCHAR" />
+</resultMap>
+
+<sql id="Base_Column_List" >pd_idx, pd_tk_idx,pd_order, pd_tk_symbol, pd_type, pd_name, pd_state, pd_block_state, pd_create_date,pd_update_date, pd_start_date, pd_expire_date,pd_interest_date, pd_day, pd_min_amount, pd_limit_amount,pd_base_amount,pd_current_interest, pd_interest_rate, pd_erc20_address, pd_eth_point, pd_erc20_point,pd_erc20_cached, pd_erc20_cached_date, pd_erc20_state,pd_detail, pd_erc20_key, tk.*</sql>
+<sql id="Api_Column_List" >pd_idx, pd_tk_idx,pd_order, pd_tk_symbol, pd_type, pd_name, pd_state, pd_block_state, pd_create_date,pd_update_date, pd_start_date, pd_expire_date,pd_interest_date, pd_day, pd_min_amount, pd_limit_amount,pd_base_amount,pd_current_interest, pd_interest_rate, pd_erc20_address, pd_eth_point, pd_erc20_point,pd_erc20_cached, pd_erc20_cached_date, pd_erc20_state,pd_detail, pd_erc20_key</sql>
+
+<sql id="Base_Search_Query">
+<trim suffixOverrides="AND">
+<if test="queryColumn != null and search != ''">
+<if test="queryColumn == 'all'">
+</if>
+</if>
+<if test="pdIdx != null">pd_idx = #{pdIdx} AND</if>
+<if test="pdTkIdx != null">pd_tk_idx = #{pdTkIdx} AND</if>
+<if test="pdTkSymbol != null">pd_tk_symbol = #{pdTkSymbol} AND</if>
+<if test="pdState != null">pd_state = #{pdState} AND</if>
+<if test="pdStateOver != null">pd_state >= #{pdStateOver} AND</if>
+<if test="pdBlockState != null">pd_block_state = #{pdBlockState} AND</if>
+<if test="pdErc20Address != null">pd_erc20_address = #{pdErc20Address} AND</if>
+<if test="pdErc20AddressIsNull != null">(pd_erc20_address IS NULL OR pd_erc20_address = '') AND</if>
+<if test="pdInterestDateUnder != null">#{pdInterestDateUnder} >= pd_interest_date AND</if>
+</trim>
+</sql>
+
+<select id="selectBySearchForApi" parameterType="hashmap" resultMap="ApiResultMap">SELECT <include refid="Api_Column_List"/> FROM z_product_info pd LEFT OUTER JOIN z_product_user pu ON pu.pu_pd_idx = pd.pd_idx<where><include refid="Base_Search_Query"/></where><if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if><if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectByIndex" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_product_info pd LEFT OUTER JOIN z_token_info tk ON pd.pd_tk_idx = tk.tk_idx WHERE pd_idx = #{idx} </select>
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_product_info pd LEFT OUTER JOIN z_token_info tk ON pd.pd_tk_idx = tk.tk_idx <where><include refid="Base_Search_Query"/></where><if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if><if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_product_info pd LEFT OUTER JOIN z_token_info tk ON pd.pd_tk_idx = tk.tk_idx </select>
+<select id="countBySearch" parameterType="hashmap" resultType="Integer">SELECT COUNT(*) FROM z_product_info pd LEFT OUTER JOIN z_token_info tk ON pd.pd_tk_idx = tk.tk_idx <where><include refid="Base_Search_Query"/></where></select>
+<select id="countAll" resultType="Integer">SELECT COUNT(*) FROM z_product_info</select>    
+
+<insert id="insert" parameterType="ProductInfoVO" >
+insert into z_product_info
+<trim prefix="(" suffix=")" suffixOverrides="," >
+<if test="pdIdx != null" >pd_idx,</if>
+<if test="pdOrder != null" >pd_order,</if>
+<if test="pdTkIdx != null" >pd_tk_idx,</if>
+<if test="pdTkSymbol != null" >pd_tk_symbol,</if>
+<if test="pdType != null" >pd_type,</if>
+<if test="pdName != null" >pd_name,</if>
+<if test="pdState != null" >pd_state,</if>
+<if test="pdBlockState != null" >pd_block_state,</if>
+<if test="pdCreateDate != null" >pd_create_date,</if>
+<if test="pdUpdateDate != null" >pd_update_date,</if>
+<if test="pdStartDate != null" >pd_start_date,</if>
+<if test="pdExpireDate != null" >pd_expire_date,</if>
+<if test="pdInterestDate != null" >pd_interest_date,</if>
+<if test="pdDay != null" >pd_day,</if>
+<if test="pdMinAmount != null" >pd_min_amount,</if>
+<if test="pdLimitAmount != null" >pd_limit_amount,</if>
+
+<if test="pdBaseAmount != null" >pd_base_amount,</if>
+<if test="pdCurrentInterest != null" >pd_current_interest,</if>
+<if test="pdInterestRate != null" >pd_interest_rate,</if>
+<if test="pdErc20Address != null" >pd_erc20_address,</if>
+<if test="pdEthPoint != null" >pd_eth_point,</if>
+<if test="pdErc20Point != null" >pd_erc20_point,</if>
+<if test="pdErc20Cached != null" >pd_erc20_cached,</if>
+<if test="pdErc20CachedDate != null" >pd_erc20_cached_date,</if>
+<if test="pdErc20State != null" >pd_erc20_state,</if>
+<if test="pdDetail != null" >pd_detail,</if>
+<if test="pdErc20Key != null" >pd_erc20_key,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides="," >
+<if test="pdIdx != null" >#{pdIdx,jdbcType=INTEGER},</if>
+<if test="pdOrder != null" >#{pdOrder,jdbcType=INTEGER},</if>
+<if test="pdTkIdx != null" >#{pdTkIdx,jdbcType=INTEGER},</if>
+<if test="pdTkSymbol != null" >#{pdTkSymbol,jdbcType=VARCHAR},</if>
+<if test="pdType != null" >#{pdType,jdbcType=VARCHAR},</if>
+<if test="pdName != null" >#{pdName,jdbcType=VARCHAR},</if>
+<if test="pdState != null" >#{pdState,jdbcType=TINYINT},</if>
+<if test="pdBlockState != null" >#{pdBlockState,jdbcType=TINYINT},</if>
+<if test="pdCreateDate != null" >#{pdCreateDate,jdbcType=TIMESTAMP},</if>
+<if test="pdUpdateDate != null" >#{pdUpdateDate,jdbcType=TIMESTAMP},</if>
+<if test="pdStartDate != null" >#{pdStartDate,jdbcType=TIMESTAMP},</if>
+<if test="pdExpireDate != null" >#{pdExpireDate,jdbcType=TIMESTAMP},</if>
+<if test="pdInterestDate != null" >#{pdInterestDate,jdbcType=TIMESTAMP},</if>
+<if test="pdDay != null" >#{pdDay,jdbcType=INTEGER},</if>
+<if test="pdMinAmount != null" >#{pdMinAmount,jdbcType=BIGINT},</if>
+<if test="pdLimitAmount != null" >#{pdLimitAmount,jdbcType=BIGINT},</if>
+
+<if test="pdBaseAmount != null" >#{pdBaseAmount,jdbcType=DECIMAL},</if>
+<if test="pdCurrentInterest != null" >#{pdCurrentInterest,jdbcType=DECIMAL},</if>
+<if test="pdInterestRate != null" >#{pdInterestRate,jdbcType=VARCHAR},</if>
+<if test="pdErc20Address != null" >#{pdErc20Address,jdbcType=VARCHAR},</if>
+<if test="pdEthPoint != null" >#{pdEthPoint,jdbcType=DECIMAL},</if>
+<if test="pdErc20Point != null" >#{pdErc20Point,jdbcType=DECIMAL},</if>
+<if test="pdErc20Cached != null" >#{pdErc20Cached,jdbcType=DECIMAL},</if>
+<if test="pdErc20CachedDate != null" >#{pdErc20CachedDate,jdbcType=TIMESTAMP},</if>
+<if test="pdErc20State != null" >#{pdErc20State,jdbcType=TINYINT},</if>
+<if test="pdDetail != null" >#{pdDetail,jdbcType=LONGVARCHAR},</if>
+<if test="pdErc20Key != null" >#{pdErc20Key,jdbcType=LONGVARCHAR},</if>
+</trim>
+</insert>
+
+<update id="update" parameterType="ProductInfoVO" >
+update z_product_info
+<set >
+<if test="pdOrder != null" >pd_order = #{pdOrder,jdbcType=INTEGER},</if>
+<if test="pdTkIdx != null" >pd_tk_idx = #{pdTkIdx,jdbcType=INTEGER},</if>
+<if test="pdTkSymbol != null" >pd_tk_symbol = #{pdTkSymbol,jdbcType=VARCHAR},</if>
+<if test="pdType != null" >pd_type = #{pdType,jdbcType=VARCHAR},</if>
+<if test="pdName != null" >pd_name = #{pdName,jdbcType=VARCHAR},</if>
+<if test="pdState != null" >pd_state = #{pdState,jdbcType=TINYINT},</if>
+<if test="pdBlockState != null" >pd_block_state = #{pdBlockState,jdbcType=TINYINT},</if>
+<if test="pdCreateDate != null" >pd_create_date = #{pdCreateDate,jdbcType=TIMESTAMP},</if>
+<if test="pdUpdateDate != null" >pd_update_date = #{pdUpdateDate,jdbcType=TIMESTAMP},</if>
+<if test="pdStartDate != null" >pd_start_date = #{pdStartDate,jdbcType=TIMESTAMP},</if>
+<if test="pdExpireDate != null" >pd_expire_date = #{pdExpireDate,jdbcType=TIMESTAMP},</if>
+<if test="pdInterestDate != null" >pd_interest_date = #{pdInterestDate,jdbcType=TIMESTAMP},</if>
+<if test="pdDay != null" >pd_day = #{pdDay,jdbcType=INTEGER},</if>
+<if test="pdMinAmount != null" >pd_min_amount = #{pdMinAmount,jdbcType=BIGINT},</if>
+<if test="pdLimitAmount != null" >pd_limit_amount = #{pdLimitAmount,jdbcType=BIGINT},</if>
+<if test="pdBaseAmount != null" >pd_base_amount = #{pdBaseAmount,jdbcType=DECIMAL},</if>
+<if test="pdCurrentInterest != null" >pd_current_interest = #{pdCurrentInterest,jdbcType=DECIMAL},</if>
+<if test="pdInterestRate != null" >pd_interest_rate = #{pdInterestRate,jdbcType=VARCHAR},</if>
+<if test="pdErc20Address != null" >pd_erc20_address = #{pdErc20Address,jdbcType=VARCHAR},</if>
+<if test="pdEthPoint != null" >pd_eth_point = #{pdEthPoint,jdbcType=DECIMAL},</if>
+<if test="pdErc20Point != null" >pd_erc20_point = #{pdErc20Point,jdbcType=DECIMAL},</if>
+<if test="pdErc20Cached != null" >pd_erc20_cached = #{pdErc20Cached,jdbcType=DECIMAL},</if>
+<if test="pdErc20CachedDate != null" >pd_erc20_cached_date = #{pdErc20CachedDate,jdbcType=TIMESTAMP},</if>
+<if test="pdErc20State != null" >pd_erc20_state = #{pdErc20State,jdbcType=TINYINT},</if>
+<if test="pdDetail != null" >pd_detail = #{pdDetail,jdbcType=LONGVARCHAR},</if>
+<if test="pdErc20Key != null" >pd_erc20_key = #{pdErc20Key,jdbcType=LONGVARCHAR},</if>
+</set>
+where pd_idx = #{pdIdx,jdbcType=INTEGER}
+</update>
+
+<update id="appendInterestAmount" parameterType="hashmap">
+update z_product_info
+<set>
+pd_update_date = SYSDATE(),
+pd_current_interest = pd_current_interest + #{amount}
+</set>
+<where>
+pd_idx = #{pdIdx,jdbcType=INTEGER}
+and #{amount} >= 0
+</where>
+</update>
+
+</mapper>

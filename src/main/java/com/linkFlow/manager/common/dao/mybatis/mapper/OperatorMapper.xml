@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.OperatorDao">
+
+<resultMap id="BaseResultMap" type="OperatorVO">
+<id column="op_idx" property="opIdx" jdbcType="INTEGER"/>
+<result column="op_id" property="opId" jdbcType="VARCHAR"/>
+    <result column="op_pwd" property="opPwd" jdbcType="VARCHAR"/>
+    <result column="op_private_key" property="opPrivateKey" jdbcType="VARCHAR"/>
+<result column="op_name" property="opName" jdbcType="VARCHAR"/>
+
+<result column="op_country_code" property="opCountryCode" jdbcType="VARCHAR"/>
+<result column="op_phone" property="opPhone" jdbcType="VARCHAR"/>
+<result column="op_email" property="opEmail" jdbcType="VARCHAR"/>
+
+<result column="op_type" property="opType" jdbcType="INTEGER"/>
+<result column="op_level" property="opLevel" jdbcType="INTEGER"/>
+<result column="op_state" property="opState" jdbcType="INTEGER"/>
+
+    <result column="op_point" property="opPoint" jdbcType="DECIMAL"/>
+    <result column="op_grade" property="opGrade" jdbcType="INTEGER"/>
+
+    <result column="op_qr_data" property="opQrData" jdbcType="VARCHAR"/>
+    <result column="op_qr_url" property="opQrUrl" jdbcType="VARCHAR"/>
+
+<result column="op_create_date" property="opCreateDate" jdbcType="TIMESTAMP"/>
+<result column="op_update_date" property="opUpdateDate" jdbcType="TIMESTAMP"/>
+<result column="op_parent_idx" property="opParentIdx" jdbcType="INTEGER"/>
+
+    <result column="op_cert_num" property="opCertNum" jdbcType="VARCHAR"/>
+    <result column="op_referral" property="opReferral" jdbcType="VARCHAR"/>
+    <result column="op_push_token" property="opPushToken" jdbcType="VARCHAR"/>
+    <result column="op_push_state" property="opPushState" jdbcType="INTEGER"/>
+    <result column="op_birth" property="opBirth" jdbcType="VARCHAR"/>
+    <result column="op_gender" property="opGender" jdbcType="VARCHAR"/>
+    <result column="op_last_transaction_id" property="opLastTransactionId" jdbcType="VARCHAR"/>
+
+<result column="op_symbol" property="opSymbol" jdbcType="VARCHAR"/>
+</resultMap>
+
+    <resultMap id="ApiResultMap" type="MemberVOForApi">
+        <result column="op_idx" property="id" jdbcType="VARCHAR"/>
+        <result column="op_name" property="name" jdbcType="VARCHAR"/>
+        <result column="op_idx" property="receiverMemo" jdbcType="VARCHAR"/>
+
+        <result column="op_country_code" property="countryCode" jdbcType="VARCHAR"/>
+        <result column="op_phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="op_email" property="email" jdbcType="VARCHAR"/>
+
+        <result column="op_point" property="point" jdbcType="DECIMAL"/>
+        <result column="op_grade" property="grade" jdbcType="INTEGER"/>
+
+        <result column="op_qr_data" property="depositMemo" jdbcType="VARCHAR"/>
+        <result column="op_qr_url" property="depositQrUrl" jdbcType="VARCHAR"/>
+
+        <result column="op_create_date" property="createDate" jdbcType="TIMESTAMP"/>
+
+        <result column="op_referral" property="referral" jdbcType="VARCHAR"/>
+        <result column="op_push_state" property="pushState" jdbcType="INTEGER"/>
+        <result column="op_birth" property="birth" jdbcType="VARCHAR"/>
+        <result column="op_gender" property="gender" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="TreeViewResultMap" type="OperatorVO">
+        <id column="op_idx" property="opIdx" jdbcType="INTEGER"/>
+        <result column="op_id" property="opId" jdbcType="VARCHAR"/>
+        <result column="op_pwd" property="opPwd" jdbcType="VARCHAR"/>
+        <result column="op_private_key" property="opPrivateKey" jdbcType="VARCHAR"/>
+        <result column="op_name" property="opName" jdbcType="VARCHAR"/>
+
+        <result column="op_country_code" property="opCountryCode" jdbcType="VARCHAR"/>
+        <result column="op_phone" property="opPhone" jdbcType="VARCHAR"/>
+        <result column="op_email" property="opEmail" jdbcType="VARCHAR"/>
+
+        <result column="op_type" property="opType" jdbcType="INTEGER"/>
+        <result column="op_level" property="opLevel" jdbcType="INTEGER"/>
+        <result column="op_state" property="opState" jdbcType="INTEGER"/>
+
+        <result column="op_point" property="opPoint" jdbcType="DECIMAL"/>
+        <result column="op_grade" property="opGrade" jdbcType="INTEGER"/>
+
+        <result column="op_qr_data" property="qrData" jdbcType="VARCHAR"/>
+        <result column="op_qr_url" property="qrUrl" jdbcType="VARCHAR"/>
+
+        <result column="op_create_date" property="opCreateDate" jdbcType="TIMESTAMP"/>
+        <result column="op_update_date" property="opUpdateDate" jdbcType="TIMESTAMP"/>
+        <result column="op_parent_idx" property="opParentIdx" jdbcType="INTEGER"/>
+
+        <result column="treeItem" property="treeItem" jdbcType="VARCHAR"/>
+        <result column="treeLevel" property="treeLevel" jdbcType="INTEGER"/>
+        <result column="treeRnum" property="treeRnum" jdbcType="INTEGER"/>
+
+        <result column="op_cert_num" property="opCertNum" jdbcType="VARCHAR"/>
+        <result column="op_referral" property="opReferral" jdbcType="VARCHAR"/>
+        <result column="op_push_token" property="opPushToken" jdbcType="VARCHAR"/>
+        <result column="op_push_state" property="opPushState" jdbcType="INTEGER"/>
+        <result column="op_birth" property="opBirth" jdbcType="VARCHAR"/>
+        <result column="op_gender" property="opGender" jdbcType="VARCHAR"/>
+        <result column="op_last_transaction_id" property="opLastTransactionId" jdbcType="VARCHAR"/>
+    </resultMap>
+
+<sql id="Base_Column_List">op_idx, op_id, op_pwd, op_private_key, op_name, op_country_code, op_phone, op_email, op_type, op_level, op_state, op_whitelist_on, op_create_date, op_update_date, op_parent_idx, op_point, op_grade,
+op_cert_num, op_referral, op_push_token, op_push_state, op_birth, op_gender, op_last_transaction_id, op_qr_data, op_qr_url, op_symbol
+</sql>
+<sql id="Api_Column_List">op_idx, op_id, op_name, op_country_code, op_phone, op_email, op_point, op_grade, op_create_date,
+op_referral, op_push_state, op_birth, op_gender, op_qr_data, op_qr_url
+</sql>
+
+<sql id="Base_Search_Query">
+<trim suffixOverrides="AND">
+<if test="queryColumn != null and search != ''">
+<if test="queryColumn == 'all'">
+(op_id LIKE CONCAT(#{search}, '%') OR
+op_name LIKE CONCAT(#{search}, '%')) AND
+</if>
+<if test="queryColumn == 'id'">op_id LIKE CONCAT(#{search}, '%') AND</if>
+<if test="queryColumn == 'name'">op_name LIKE CONCAT(#{search}, '%') AND</if>
+</if>
+    <if test="opIdx != null">op_idx = #{opIdx} AND</if>
+<if test="opId != null">op_id = #{opId} AND</if>
+<if test="opName != null and opName != ''">op_name = #{opName} AND</if>
+<if test="opCountryCode != null">op_country_code = #{opCountryCode} AND</if>
+<if test="opPhone != null">op_phone = #{opPhone} AND</if>
+<if test="opCertNum != null">op_cert_num = #{opCertNum} AND</if>
+<if test="opType != null and opType != ''">op_type = #{opType} AND</if>
+<if test="opState != null and opState != ''">op_state = #{opState} AND</if>
+<if test="opQrData != null">op_qr_data = #{opQrData} AND</if>
+<if test="opIdxList != null">op_idx IN <foreach collection="opIdxList" item="item" index="index" separator="," open="(" close=")">#{item}</foreach> AND</if>
+</trim>
+</sql>
+
+<insert id="insert" parameterType="OperatorVO" useGeneratedKeys="true" keyProperty="opIdx">
+INSERT INTO z_operator
+<trim prefix="(" suffix=")" suffixOverrides=",">
+op_create_date,
+op_update_date,
+<if test="opIdx != null">op_idx,</if>
+<if test="opId != null">op_id,</if>
+<if test="opPwd != null">op_pwd,</if>
+<if test="opPrivateKey != null">op_private_key,</if>
+<if test="opName != null">op_name,</if>
+<if test="opCountryCode != null">op_country_code,</if>
+<if test="opPhone != null">op_phone,</if>
+<if test="opEmail != null">op_email,</if>
+<if test="opType != null">op_type,</if>
+<if test="opLevel != null">op_level,</if>
+<if test="opState != null">op_state,</if>
+<if test="opParentIdx != null">op_parent_idx,</if>
+
+    <if test="opCertNum != null">op_cert_num,</if>
+    <if test="opReferral != null">op_referral,</if>
+    <if test="opPushToken != null">op_push_token,</if>
+    <if test="opPushState != null">op_push_state,</if>
+    <if test="opBirth != null">op_birth,</if>
+    <if test="opGender != null">op_gender,</if>
+    <if test="opLastTransactionId != null">op_last_transaction_id,</if>
+    <if test="opQrData != null">op_qr_data,</if>
+    <if test="opQrUrl != null">op_qr_url,</if>
+<if test="opSymbol != null">op_symbol,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides=",">
+SYSDATE(),
+SYSDATE(),
+<if test="opIdx != null">#{opIdx,jdbcType=INTEGER},</if>
+<if test="opId != null">#{opId,jdbcType=VARCHAR},</if>
+<if test="opPwd != null">#{opPwd,jdbcType=VARCHAR},</if>
+<if test="opPrivateKey != null">#{opPrivateKey,jdbcType=VARCHAR},</if>
+<if test="opName != null">#{opName,jdbcType=VARCHAR},</if>
+<if test="opCountryCode != null">#{opCountryCode,jdbcType=VARCHAR},</if>
+<if test="opPhone != null">#{opPhone,jdbcType=VARCHAR},</if>
+<if test="opEmail != null">#{opEmail,jdbcType=VARCHAR},</if>
+<if test="opType != null">#{opType,jdbcType=INTEGER},</if>
+<if test="opLevel != null">#{opLevel,jdbcType=INTEGER},</if>
+<if test="opState != null">#{opState,jdbcType=INTEGER},</if>
+<if test="opParentIdx != null">#{opParentIdx,jdbcType=INTEGER},</if>
+
+    <if test="opCertNum != null">#{opCertNum,jdbcType=VARCHAR},</if>
+    <if test="opReferral != null">#{opReferral,jdbcType=VARCHAR},</if>
+    <if test="opPushToken != null">#{opPushToken,jdbcType=VARCHAR},</if>
+    <if test="opPushState != null">#{opPushState,jdbcType=INTEGER},</if>
+    <if test="opBirth != null">#{opBirth,jdbcType=VARCHAR},</if>
+    <if test="opGender != null">#{opGender,jdbcType=VARCHAR},</if>
+    <if test="opLastTransactionId != null">#{opLastTransactionId,jdbcType=VARCHAR},</if>
+    <if test="opQrData != null">#{opQrData,jdbcType=VARCHAR},</if>
+    <if test="opQrUrl != null">#{opQrUrl,jdbcType=VARCHAR},</if>
+<if test="opSymbol != null">#{opSymbol,jdbcType=VARCHAR},</if>
+</trim>
+</insert>
+
+<select id="selectByIndex" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_operator WHERE op_idx = #{idx} </select>
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_operator <where><include refid="Base_Search_Query"/></where><if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if><if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectBySearchForApi" parameterType="hashmap" resultMap="ApiResultMap">SELECT <include refid="Api_Column_List"/> FROM z_operator <where><include refid="Base_Search_Query"/></where><if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if><if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_operator</select>
+<select id="countBySearch" parameterType="hashmap" resultType="Integer">SELECT COUNT(*) FROM z_operator <where><include refid="Base_Search_Query"/></where></select>
+<select id="countAll" resultType="Integer">SELECT COUNT(*) FROM z_operator</select>
+
+<update id="update" parameterType="OperatorVO">
+UPDATE z_operator
+<set>
+op_update_date = SYSDATE(),
+<if test="opPwd != null">op_pwd = #{opPwd,jdbcType=VARCHAR},</if>
+<if test="opPrivateKey != null">op_private_key = #{opPrivateKey,jdbcType=VARCHAR},</if>
+<if test="opName != null">op_name = #{opName,jdbcType=VARCHAR},</if>
+<if test="opCountryCode != null">op_country_code = #{opCountryCode,jdbcType=VARCHAR},</if>
+<if test="opPhone != null">op_phone = #{opPhone,jdbcType=VARCHAR},</if>
+<if test="opEmail != null">op_email = #{opEmail,jdbcType=VARCHAR},</if>
+<if test="opType != null">op_type = #{opType,jdbcType=INTEGER},</if>
+<if test="opState != null">op_state = #{opState,jdbcType=INTEGER},</if>
+  <if test="opCertNum != null">op_cert_num = #{opCertNum,jdbcType=VARCHAR},</if>
+    <if test="opReferral != null">op_referral = #{opReferral,jdbcType=VARCHAR},</if>
+    <if test="opPushToken != null">op_push_token = #{opPushToken,jdbcType=VARCHAR},</if>
+    <if test="opPushState != null">op_push_state = #{opPushState,jdbcType=INTEGER},</if>
+    <if test="opBirth != null">op_birth = #{opBirth,jdbcType=VARCHAR},</if>
+    <if test="opGender != null">op_gender = #{opGender,jdbcType=VARCHAR},</if>
+    <if test="opLastTransactionId != null">op_last_transaction_id = #{opLastTransactionId,jdbcType=VARCHAR},</if>
+    <if test="opQrData != null">op_qr_data = #{opQrData,jdbcType=VARCHAR},</if>
+    <if test="opQrUrl != null">op_qr_url = #{opQrUrl,jdbcType=VARCHAR},</if>
+<if test="opSymbol != null">op_symbol = #{opSymbol,jdbcType=VARCHAR},</if>
+</set>
+WHERE op_idx = #{opIdx,jdbcType=INTEGER}
+</update>
+
+<update id="updateOperatorStateByParent" parameterType="hashmap">
+update z_operator
+<set>
+op_state = #{opState}
+</set>
+<where>
+op_idx in
+<foreach collection="opIdxList" item="item" index="index" separator="," open="(" close=")">
+#{item}
+</foreach>
+</where>
+</update>
+
+    <update id="addPointToOperator" parameterType="hashmap">
+        UPDATE z_operator
+        <set>
+            op_point = op_point + #{amount}
+        </set>
+        <where>
+            op_idx = #{opIdx,jdbcType=INTEGER}
+            and #{amount} >= 0
+        </where>
+    </update>
+
+    <update id="subtractPointFromOperator" parameterType="hashmap">
+        update z_operator
+        <set>
+            op_point = op_point - #{amount}
+        </set>
+        <where>
+            op_idx = #{opIdx}
+            and #{amount} >= 0
+            and op_point >= #{amount}
+        </where>
+    </update>
+
+    <update id="addPointWithTransactionId" parameterType="hashmap">
+        UPDATE z_operator
+        <set>
+            op_point = op_point + #{amount},
+            op_last_transaction_id = #{queryTransactionId}
+        </set>
+        <where>
+            op_idx = #{opIdx,jdbcType=INTEGER}
+            and #{amount} >= 0
+            and ( op_last_transaction_id is null or op_last_transaction_id = #{lastTransactionId} )
+        </where>
+    </update>
+
+    <update id="subtractPointWithTransactionId" parameterType="hashmap">
+        update z_operator
+        <set>
+            op_point = op_point - #{amount},
+            op_last_transaction_id = #{queryTransactionId}
+        </set>
+        <where>
+            op_idx = #{opIdx}
+            and #{amount} >= 0
+            and op_point >= #{amount}
+            and ( op_last_transaction_id is null or op_last_transaction_id = #{lastTransactionId} )
+        </where>
+    </update>
+
+    <select id="selectChildList" resultMap="TreeViewResultMap" parameterType="hashmap">
+        SELECT CONCAT(REPEAT(' ', ho.level - 1), CAST(hi.op_idx AS CHAR)) AS treeItem,
+        ho.level as treeLevel,
+        ho.RNUM as treeRnum,
+
+        hi.op_idx AS op_idx,
+        hi.op_parent_idx AS op_parent_idx,
+        hi.op_id AS op_id,
+        hi.op_pwd AS op_pwd,
+        hi.op_private_key AS op_private_key,
+        hi.op_name AS op_name,
+
+        hi.op_cert_num AS op_cert_num,
+        hi.op_country_code AS op_country_code,
+        hi.op_phone AS op_phone,
+        hi.op_email AS op_email,
+
+        hi.op_type AS op_type,
+        hi.op_level AS op_level,
+        hi.op_state AS op_state,
+        hi.op_whitelist_on AS op_whitelist_on,
+
+        hi.op_cert_num AS op_cert_num,
+        hi.op_referral AS op_referral,
+        hi.op_push_token AS op_push_token,
+        hi.op_push_state AS op_push_state,
+        hi.op_birth AS op_birth,
+        hi.op_gender AS op_gender,
+        hi.op_last_transaction_id AS op_last_transaction_id,
+
+        hi.op_point AS op_point,
+        hi.op_create_date AS op_create_date,
+        hi.op_update_date AS op_update_date
+        FROM
+        (
+        SELECT hierarchy_connect_by_parent_eq_prior_id_operator(op.op_idx) AS id, @level AS level, @rownum := @rownum+1 AS RNUM
+        FROM
+        (
+        SELECT @start_with := #{parentOpIdx,jdbcType=INTEGER},
+        @id := @start_with,
+        @level := 0,
+        @rownum:=0
+        ) vars,
+        z_operator op
+        WHERE @id IS NOT NULL
+        ) ho
+        JOIN z_operator hi ON hi.op_idx = ho.id
+
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="childOpIdx != null">hi.op_idx = #{childOpIdx,jdbcType=INTEGER} AND</if>
+                <if test="searchLevel != null">ho.level = #{searchLevel,jdbcType=INTEGER} AND</if>
+
+                <if test="queryColumn != null and search != ''">
+                    <if test="queryColumn == 'all'">
+                        op_id LIKE CONCAT(#{search}, '%') OR
+                        op_name LIKE CONCAT(#{search}, '%') AND
+                    </if>
+
+                    <if test="queryColumn == 'id'">op_id LIKE CONCAT(#{search}, '%') AND</if>
+                    <if test="queryColumn == 'name'">op_name LIKE CONCAT(#{search}, '%') AND</if>
+                </if>
+                <if test="opId != null">op_id = #{opId} AND</if>
+                <if test="opName != null and opName != ''">op_name = #{opName} AND</if>
+                <if test="opType != null and opType != ''">op_type = #{opType} AND</if>
+                <if test="opState != null and opState != ''">op_state = #{opState} AND</if>
+            </trim>
+        </where>
+
+        ORDER BY ho.RNUM
+        <if test="startRow != null and rowCount != null">
+            LIMIT #{startRow}, #{rowCount}
+        </if>
+    </select>
+
+    <select id="countBySearchForTreeView" parameterType="hashmap" resultType="Integer">
+        SELECT count(*)
+        FROM
+        (
+        SELECT hierarchy_connect_by_parent_eq_prior_id_operator(op.op_idx) AS id, @level AS level, @rownum := @rownum+1 AS RNUM
+        FROM
+        (
+        SELECT @start_with := #{parentOpIdx,jdbcType=INTEGER},
+        @id := @start_with,
+        @level := 0,
+        @rownum:=0
+        ) vars,
+        z_operator op
+        WHERE @id IS NOT NULL
+        ) ho
+        JOIN z_operator hi ON hi.op_idx = ho.id
+
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="childOpIdx != null">hi.op_idx = #{childOpIdx,jdbcType=INTEGER} AND</if>
+                <if test="searchLevel != null">ho.level = #{searchLevel,jdbcType=INTEGER} AND</if>
+
+                <if test="queryColumn != null and search != ''">
+                    <if test="queryColumn == 'all'">
+                        op_id LIKE CONCAT(#{search}, '%') OR
+                        op_name LIKE CONCAT(#{search}, '%') AND
+                    </if>
+                    <if test="queryColumn == 'id'">op_id LIKE CONCAT(#{search}, '%') AND</if>
+                    <if test="queryColumn == 'name'">op_name LIKE CONCAT(#{search}, '%') AND</if>
+                </if>
+
+                <if test="opId != null">op_id = #{opId} AND</if>
+                <if test="opName != null and opName != ''">op_name = #{opName} AND</if>
+                <if test="opType != null and opType != ''">op_type = #{opType} AND</if>
+                <if test="opState != null and opState != ''">op_state = #{opState} AND</if>
+            </trim>
+        </where>
+    </select>
+
+    <select id="selectParentIdxByIndex" parameterType="hashmap" resultType="Integer">
+        SELECT _ID FROM
+        (
+        SELECT @r as _ID,	(
+        SELECT @r := op_parent_idx FROM z_operator WHERE op_idx = _ID
+        ) AS _PARENT_ID
+        FROM
+        (
+        SELECT @r := #{idx}
+        ) vars, z_operator h
+        WHERE @r != 0
+        ) T1
+        where T1._PARENT_ID=0
+    </select>
+
+    <select id="selectParentByIndex" parameterType="hashmap" resultMap="BaseResultMap">
+        SELECT hh.* FROM
+        (
+        SELECT @r as _ID,	(
+        SELECT @r := op_parent_idx FROM z_operator WHERE op_idx = _ID
+        ) AS _PARENT_ID
+        FROM
+        (
+        SELECT @r := #{idx}
+        ) vars, z_operator h
+        WHERE @r != 0
+
+        ) T1 LEFT OUTER JOIN z_operator hh ON T1._ID=hh.op_idx
+        where T1._PARENT_ID=0
+    </select>
+
+<delete id="deleteByIndex" parameterType="Integer">DELETE FROM z_operator WHERE op_idx = #{idx}</delete>
+</mapper>

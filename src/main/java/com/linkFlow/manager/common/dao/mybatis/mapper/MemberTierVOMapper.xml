@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.MemberTierDao">
+
+<resultMap id="BaseResultMap" type="MemberTierVO" >
+<id column="mt_idx" property="mtIdx" jdbcType="INTEGER" />
+<result column="mt_state" property="mtState" jdbcType="TINYINT" />
+<result column="mt_tier" property="mtTier" jdbcType="TINYINT" />
+<result column="mt_limit_amount" property="mtLimitAmount" jdbcType="INTEGER" />
+<result column="mt_deposit_amount" property="mtDepositAmount" jdbcType="INTEGER" />
+<result column="mt_rate" property="mtRate" jdbcType="DECIMAL" />
+<result column="mt_create_date" property="mtCreateDate" jdbcType="TIMESTAMP" />
+<result column="mt_update_date" property="mtUpdateDate" jdbcType="TIMESTAMP" />
+</resultMap>
+
+<resultMap id="ApiResultMap" type="MemberTierVOForApi" >
+<result column="mt_tier" property="tier" jdbcType="TINYINT" />
+<result column="mt_limit_amount" property="limitAmount" jdbcType="INTEGER" />
+<result column="mt_deposit_amount" property="depositAmount" jdbcType="INTEGER" />
+<result column="mt_rate" property="rate" jdbcType="DECIMAL" />
+</resultMap>
+
+<sql id="Base_Column_List" >mt_idx, mt_state, mt_tier, mt_limit_amount, mt_deposit_amount, mt_rate, mt_create_date, mt_update_date</sql>
+<sql id="Api_Column_List" >mt_idx, mt_state, mt_tier, mt_limit_amount, mt_deposit_amount, mt_rate, mt_create_date, mt_update_date</sql>
+
+<sql id="BaseSearchQuery">
+<trim suffixOverrides="AND">
+<if test="queryColumn != null and search != ''">
+<if test="queryColumn == 'all'">
+</if>
+</if>
+<if test="mtIdx != null">mt_idx = #{mtIdx} AND</if>
+<if test="mtState != null">mt_state = #{mtState} AND</if>
+<if test="mtTier != null">mt_tier = #{mtTier} AND</if>
+<if test="mtDepositAmountUnder != null">#{mtDepositAmountUnder} >= mt_deposit_amount AND</if>
+</trim>
+</sql>
+
+<select id="selectBySearchForApi" parameterType="hashmap" resultMap="ApiResultMap">SELECT <include refid="Api_Column_List"/> FROM z_member_tier  <where><include refid="BaseSearchQuery"/></where><if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if><if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_member_tier  <where><include refid="BaseSearchQuery"/></where><if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if><if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectByIndex" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_member_tier  WHERE lu_idx = #{idx} </select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_member_tier  </select>
+<select id="countBySearch" parameterType="hashmap" resultType="Integer">SELECT COUNT(*) FROM z_member_tier  <where><include refid="BaseSearchQuery"/></where></select>
+<select id="countAll" resultType="Integer">SELECT COUNT(*) FROM z_member_tier</select>
+
+<insert id="insert" parameterType="MemberTierVO" >
+insert into z_member_tier
+<trim prefix="(" suffix=")" suffixOverrides="," >
+<if test="mtIdx != null" >mt_idx,</if>
+<if test="mtState != null" >mt_state,</if>
+<if test="mtTier != null" >mt_tier,</if>
+<if test="mtLimitAmount != null" >mt_limit_amount,</if>
+<if test="mtDepositAmount != null" >mt_deposit_amount,</if>
+<if test="mtRate != null" >mt_rate,</if>
+<if test="mtCreateDate != null" >mt_create_date,</if>
+<if test="mtUpdateDate != null" >mt_update_date,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides="," >
+<if test="mtIdx != null" >#{mtIdx,jdbcType=INTEGER},</if>
+<if test="mtState != null" >#{mtState,jdbcType=TINYINT},</if>
+<if test="mtTier != null" >#{mtTier,jdbcType=TINYINT},</if>
+<if test="mtLimitAmount != null" >#{mtLimitAmount,jdbcType=INTEGER},</if>
+<if test="mtDepositAmount != null" >#{mtDepositAmount,jdbcType=INTEGER},</if>
+<if test="mtRate != null" >#{mtRate,jdbcType=DECIMAL},</if>
+<if test="mtCreateDate != null" >#{mtCreateDate,jdbcType=TIMESTAMP},</if>
+<if test="mtUpdateDate != null" >#{mtUpdateDate,jdbcType=TIMESTAMP},</if>
+</trim>
+</insert>
+
+<update id="update" parameterType="MemberTierVO" >
+update z_member_tier
+<set >
+mt_update_date = SYSDATE(),
+<if test="mtState != null" >mt_state = #{mtState,jdbcType=TINYINT},</if>
+<if test="mtTier != null" >mt_tier = #{mtTier,jdbcType=TINYINT},</if>
+<if test="mtLimitAmount != null" >mt_limit_amount = #{mtLimitAmount,jdbcType=INTEGER},</if>
+<if test="mtDepositAmount != null" >mt_deposit_amount = #{mtDepositAmount,jdbcType=INTEGER},</if>
+<if test="mtRate != null" >mt_rate = #{mtRate,jdbcType=DECIMAL},</if>
+</set>
+where mt_idx = #{mtIdx,jdbcType=INTEGER}
+</update>
+
+
+</mapper>

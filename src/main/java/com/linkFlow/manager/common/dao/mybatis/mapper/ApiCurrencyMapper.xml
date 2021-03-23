@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.ApiCurrencyDao">
+
+<resultMap id="BaseResultMap" type="ApiCurrencyVO">
+<id column="cur_idx" property="curIdx" jdbcType="BIGINT"/>
+<result column="cur_update_date" property="curUpdateDate" jdbcType="TIMESTAMP"/>
+<result column="cur_search_date" property="curSearchDate" jdbcType="VARCHAR"/>
+
+<result column="result" property="result" jdbcType="INTEGER"/>
+
+<result column="cur_unit" property="cur_unit" jdbcType="VARCHAR"/>
+<result column="cur_nm" property="cur_nm" jdbcType="VARCHAR"/>
+
+<result column="ttb" property="ttb" jdbcType="DECIMAL"/>
+<result column="tts" property="tts" jdbcType="DECIMAL"/>
+<result column="deal_bas_r" property="deal_bas_r" jdbcType="DECIMAL"/>
+<result column="bkpr" property="bkpr" jdbcType="DECIMAL"/>
+<result column="kftc_bkpr" property="kftc_bkpr" jdbcType="DECIMAL"/>
+<result column="kftc_deal_bas_r" property="kftc_deal_bas_r" jdbcType="DECIMAL"/>
+</resultMap>
+
+<sql id="Base_Column_List">cur_idx, cur_update_date, cur_search_date, result, cur_unit, cur_nm, ttb, tts, deal_bas_r, bkpr, kftc_bkpr, kftc_deal_bas_r</sql>
+
+<sql id="BaseSearchQuery">
+<trim suffixOverrides="AND">
+<if test="curIdx != null">cur_idx = #{curIdx} AND</if>
+<if test="curSearchDate != null">cur_search_date = #{curSearchDate} AND</if>
+<if test="result != null">result = #{result} AND</if>
+<if test="cur_unit != null">cur_unit = #{cur_unit} AND</if>
+<if test="cur_nm != null">cur_nm = #{cur_nm} AND</if>
+<if test="cur_unitList != null">cur_unit IN <foreach collection="cur_unitList" item="item" index="index" separator="," open="(" close=")">#{item}</foreach>AND</if>
+</trim>
+</sql>
+
+<insert id="insert" parameterType="ApiCurrencyVO" useGeneratedKeys="true" keyProperty="curIdx">
+INSERT INTO z_api_currency
+<trim prefix="(" suffix=")" suffixOverrides=",">
+cur_update_date,
+<if test="curSearchDate != null">cur_search_date,</if>
+<if test="result != null">result,</if>
+<if test="cur_unit != null">cur_unit,</if>
+<if test="cur_nm != null">cur_nm,</if>
+<if test="ttb != null">ttb,</if>
+<if test="tts != null">tts,</if>
+<if test="deal_bas_r != null">deal_bas_r,</if>
+<if test="bkpr != null">bkpr,</if>
+<if test="kftc_bkpr != null">kftc_bkpr,</if>
+<if test="kftc_deal_bas_r != null">kftc_deal_bas_r,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides=",">
+SYSDATE(),
+<if test="curSearchDate != null">#{curSearchDate,jdbcType=VARCHAR},</if>
+<if test="result != null">#{result,jdbcType=INTEGER},</if>
+<if test="cur_unit != null">#{cur_unit,jdbcType=VARCHAR},</if>
+<if test="cur_nm != null">#{cur_nm,jdbcType=VARCHAR},</if>
+<if test="ttb != null">#{ttb,jdbcType=DECIMAL},</if>
+<if test="tts != null">#{tts,jdbcType=DECIMAL},</if>
+<if test="deal_bas_r != null">#{deal_bas_r,jdbcType=DECIMAL},</if>
+<if test="bkpr != null">#{bkpr,jdbcType=DECIMAL},</if>
+<if test="kftc_bkpr != null">#{kftc_bkpr,jdbcType=DECIMAL},</if>
+<if test="kftc_deal_bas_r != null">#{kftc_deal_bas_r,jdbcType=DECIMAL},</if>
+</trim>
+</insert>
+
+<insert id="insertOrUpdate" parameterType="ApiCurrencyVO" useGeneratedKeys="true" keyProperty="curIdx">
+INSERT INTO z_api_currency
+<trim prefix="(" suffix=")" suffixOverrides=",">
+cur_update_date,
+<if test="curSearchDate != null">cur_search_date,</if>
+<if test="result != null">result,</if>
+<if test="cur_unit != null">cur_unit,</if>
+<if test="cur_nm != null">cur_nm,</if>
+<if test="ttb != null">ttb,</if>
+<if test="tts != null">tts,</if>
+<if test="deal_bas_r != null">deal_bas_r,</if>
+<if test="bkpr != null">bkpr,</if>
+<if test="kftc_bkpr != null">kftc_bkpr,</if>
+<if test="kftc_deal_bas_r != null">kftc_deal_bas_r,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides=",">
+SYSDATE(),
+<if test="curSearchDate != null">#{curSearchDate,jdbcType=VARCHAR},</if>
+<if test="result != null">#{result,jdbcType=INTEGER},</if>
+<if test="cur_unit != null">#{cur_unit,jdbcType=VARCHAR},</if>
+<if test="cur_nm != null">#{cur_nm,jdbcType=VARCHAR},</if>
+<if test="ttb != null">#{ttb,jdbcType=VARCHAR},</if>
+<if test="tts != null">#{tts,jdbcType=VARCHAR},</if>
+<if test="deal_bas_r != null">#{deal_bas_r,jdbcType=VARCHAR},</if>
+<if test="bkpr != null">#{bkpr,jdbcType=VARCHAR},</if>
+<if test="kftc_bkpr != null">#{kftc_bkpr,jdbcType=VARCHAR},</if>
+<if test="kftc_deal_bas_r != null">#{kftc_deal_bas_r,jdbcType=DECIMAL},</if>
+</trim>
+ON DUPLICATE KEY UPDATE
+<trim suffixOverrides=",">
+cur_update_date = SYSDATE(),
+<if test="curSearchDate != null">cur_search_date = #{curSearchDate,jdbcType=VARCHAR},</if>
+<if test="result != null">result = #{result,jdbcType=INTEGER},</if>
+<if test="cur_unit != null">cur_unit = #{cur_unit,jdbcType=VARCHAR},</if>
+<if test="cur_nm != null">cur_nm = #{cur_nm,jdbcType=VARCHAR},</if>
+<if test="ttb != null">ttb = #{ttb,jdbcType=DECIMAL},</if>
+<if test="tts != null">tts = #{tts,jdbcType=DECIMAL},</if>
+<if test="deal_bas_r != null">deal_bas_r = #{deal_bas_r,jdbcType=DECIMAL},</if>
+<if test="bkpr != null">bkpr = #{bkpr,jdbcType=DECIMAL},</if>
+<if test="kftc_bkpr != null">kftc_bkpr = #{kftc_bkpr,jdbcType=DECIMAL},</if>
+<if test="kftc_deal_bas_r != null">kftc_deal_bas_r = #{kftc_deal_bas_r,jdbcType=DECIMAL},</if>
+</trim>
+</insert>
+
+<update id="update" parameterType="ApiCurrencyVO">
+UPDATE z_api_currency
+<set>
+cur_update_date = SYSDATE(),
+<if test="curSearchDate != null">cur_search_date = #{curSearchDate,jdbcType=VARCHAR},</if>
+<if test="result != null">result = #{result,jdbcType=INTEGER},</if>
+<if test="cur_unit != null">cur_unit = #{cur_unit,jdbcType=VARCHAR},</if>
+<if test="cur_nm != null">cur_nm = #{cur_nm,jdbcType=VARCHAR},</if>
+<if test="ttb != null">ttb = #{ttb,jdbcType=DECIMAL},</if>
+<if test="tts != null">tts = #{tts,jdbcType=DECIMAL},</if>
+<if test="deal_bas_r != null">deal_bas_r = #{deal_bas_r,jdbcType=DECIMAL},</if>
+<if test="bkpr != null">bkpr = #{bkpr,jdbcType=DECIMAL},</if>
+<if test="kftc_bkpr != null">kftc_bkpr = #{kftc_bkpr,jdbcType=DECIMAL},</if>
+<if test="kftc_deal_bas_r != null">kftc_deal_bas_r = #{kftc_deal_bas_r,jdbcType=DECIMAL},</if>
+</set>
+WHERE cur_idx = #{curIdx}
+</update>
+
+<select id="selectByIndex" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/>FROM z_api_currencyWHERE cur_idx = #{idx}</select>
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/>FROM z_api_currency<where><include refid="BaseSearchQuery"/></where><if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if><if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/>FROM z_api_currency<if test="orderColumn != null">Order by ${orderColumn} ${order}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="countBySearch" parameterType="hashmap" resultType="Integer">SELECT COUNT(*) FROM z_api_currency <where><include refid="BaseSearchQuery"/></where></select>
+<select id="countAll" resultType="Integer">SELECT COUNT(*) FROM z_api_currency</select>
+<delete id="deleteByIndex" parameterType="Long">DELETE FROM z_api_currency WHERE cur_idx = #{idx}</delete>
+</mapper>

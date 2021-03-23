@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.RandomTicketDao">
+
+<resultMap id="BaseResultMap" type="RandomTicketVO" >
+<id column="rt_idx" property="rtIdx" jdbcType="BIGINT" />
+<result column="rt_state" property="rtState" jdbcType="TINYINT" />
+<result column="rt_create_date" property="rtCreateDate" jdbcType="TIMESTAMP" />
+<result column="rt_update_date" property="rtUpdateDate" jdbcType="TIMESTAMP" />
+<result column="rt_time" property="rtTime" jdbcType="BIGINT" />
+<result column="rt_key" property="rtKey" jdbcType="VARCHAR" />
+<result column="rt_from" property="rtFrom" jdbcType="VARCHAR" />
+</resultMap>
+
+
+<sql id="Base_Column_List" >rt_idx, rt_state, rt_create_date, rt_update_date, rt_time, rt_key,rt_from</sql>
+
+<sql id="Base_Search_Query">
+<trim suffixOverrides="AND">
+<if test="queryColumn != null and search != ''">
+<if test="queryColumn == 'all'">
+</if>
+</if>
+<if test="rtIdx != null">rt_idx = #{rtIdx} AND</if>
+<if test="rtKey != null">rt_key = #{rtKey} AND</if>
+<if test="rtFrom != null">rt_from = #{rtrtFrom} AND</if>
+<if test="rtCreateDateUnder != null">#{rtCreateDateUnder} >= pu_create_date AND</if>
+<if test="rtCreateDateOver != null">pu_create_date >= #{rtCreateDateOver} AND</if>
+</trim>
+</sql>
+
+<select id="selectByIndex" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_random_ticket WHERE rt_idx = #{idx} </select>
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_random_ticket <where><include refid="Base_Search_Query"/></where><if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if><if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_random_ticket</select>
+<select id="countBySearch" parameterType="hashmap" resultType="Long">SELECT COUNT(*) FROM z_random_ticket <where><include refid="Base_Search_Query"/></where></select>
+<select id="countAll" resultType="Long">SELECT COUNT(*) FROM z_random_ticket</select>
+
+<insert id="insert" parameterType="RandomTicketVO" >
+insert into z_random_ticket
+<trim prefix="(" suffix=")" suffixOverrides="," >
+<if test="rtIdx != null" >rt_idx,</if>
+<if test="rtState != null" >rt_state,</if>
+<if test="rtCreateDate != null" >rt_create_date,</if>
+<if test="rtUpdateDate != null" >rt_update_date,</if>
+<if test="rtTime != null" >rt_time,</if>
+<if test="rtKey != null" >rt_key,</if>
+<if test="rtFrom != null" >rt_from,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides="," >
+<if test="rtIdx != null" >#{rtIdx,jdbcType=BIGINT},</if>
+<if test="rtState != null" >#{rtState,jdbcType=TINYINT},</if>
+<if test="rtCreateDate != null" >#{rtCreateDate,jdbcType=TIMESTAMP},</if>
+<if test="rtUpdateDate != null" >#{rtUpdateDate,jdbcType=TIMESTAMP},</if>
+<if test="rtTime != null" >#{rtTime,jdbcType=BIGINT},</if>
+<if test="rtKey != null" >#{rtKey,jdbcType=VARCHAR},</if>
+<if test="rtFrom != null" >#{rtFrom,jdbcType=VARCHAR},</if>
+</trim>
+</insert>
+<update id="update" parameterType="RandomTicketVO" >
+update z_random_ticket
+<set >
+<if test="rtState != null" >rt_state = #{rtState,jdbcType=TINYINT},</if>
+<if test="rtCreateDate != null" >rt_create_date = #{rtCreateDate,jdbcType=TIMESTAMP},</if>
+<if test="rtUpdateDate != null" >rt_update_date = #{rtUpdateDate,jdbcType=TIMESTAMP},</if>
+<if test="rtTime != null" >rt_time = #{rtTime,jdbcType=BIGINT},</if>
+<if test="rtKey != null" >rt_key = #{rtKey,jdbcType=VARCHAR},</if>
+</set>
+where rt_idx = #{rtIdx,jdbcType=BIGINT}
+</update>
+
+</mapper>

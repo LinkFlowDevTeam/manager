@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.TransactionDao">
+
+<resultMap id="BaseResultMap" type="TransactionVO">
+<id column="tr_idx" property="trIdx" jdbcType="BIGINT"/>
+<result column="tr_create_date" property="trCreateDate" jdbcType="TIMESTAMP"/>
+<result column="tr_update_date" property="trUpdateDate" jdbcType="TIMESTAMP"/>
+<result column="tr_year" property="trYear" jdbcType="VARCHAR"/>
+<result column="tr_month" property="trMonth" jdbcType="VARCHAR"/>
+<result column="tr_date" property="trDate" jdbcType="VARCHAR"/>
+<result column="tr_mb_idx" property="trMbIdx" jdbcType="BIGINT"/>
+<result column="tr_mb_id" property="trMbId" jdbcType="VARCHAR"/>
+<result column="tr_update_type" property="trUpdateType" jdbcType="INTEGER"/>
+<result column="tr_type" property="trType" jdbcType="INTEGER"/>
+<result column="tr_unique_id" property="trUniqueId" jdbcType="VARCHAR"/>
+<result column="tr_state" property="trState" jdbcType="TINYINT"/>
+<result column="tr_tk_idx" property="trTkIdx" jdbcType="INTEGER"/>
+<result column="tr_tk_symbol" property="trTkSymbol" jdbcType="VARCHAR"/>
+<result column="tr_amount" property="trAmount" jdbcType="DECIMAL"/>
+<result column="tr_point_before" property="trPointBefore" jdbcType="DECIMAL"/>
+<result column="tr_point_after" property="trPointAfter" jdbcType="DECIMAL"/>
+
+<association property="memberVO" javaType="MemberVO" column="mb_idx" autoMapping="true" />
+<association property="trExtraVO" javaType="TrExtraVO" column="et_idx" autoMapping="true" />
+</resultMap>
+
+<resultMap id="ApiResultMap" type="TransactionVOForApi">
+<id column="tr_idx" property="idx" jdbcType="BIGINT"/>
+<result column="tr_create_date" property="createDate" jdbcType="TIMESTAMP"/>
+<result column="tr_update_type" property="updateType" jdbcType="INTEGER"/>
+<result column="tr_type" property="type" jdbcType="INTEGER"/>
+<result column="tr_unique_id" property="uniqueId" jdbcType="VARCHAR"/>
+<result column="tr_state" property="state" jdbcType="TINYINT"/>
+<result column="tr_tk_idx" property="tokenId" jdbcType="INTEGER"/>
+<result column="tr_tk_symbol" property="symbol" jdbcType="VARCHAR"/>
+<result column="tr_amount" property="amount" jdbcType="DECIMAL"/>
+</resultMap>
+
+<resultMap id="SumResultMap" type="TransactionVOForSum">
+<result column="countItem" property="countItem" jdbcType="INTEGER"/>
+<result column="sumAmount" property="sumAmount" jdbcType="DECIMAL"/>
+</resultMap>
+
+<sql id="Base_Column_List">tr_idx,tr_create_date,tr_update_date,tr_year,tr_month,tr_date,tr_mb_idx,tr_mb_id,tr_update_type,tr_type,tr_unique_id,tr_state,tr_tk_idx,tr_tk_symbol,tr_amount,tr_point_before,tr_point_after, mb.*, et.*</sql>
+<sql id="Api_Column_List">tr_idx,tr_create_date,tr_update_type,tr_type,tr_unique_id,tr_state,tr_tk_idx,tr_tk_symbol,tr_amount</sql>
+
+<sql id="JoinTableFrom" > FROM z_transaction tr LEFT OUTER JOIN z_member mb ON mb.mb_idx = tr.tr_mb_idx LEFT OUTER JOIN z_tr_extra et ON et.et_tr_idx = tr.tr_idx </sql>
+
+<sql id="BaseSearchQuery">
+<trim suffixOverrides="AND">
+<if test="searchColumn != null and search != ''">
+<if test="searchColumn == 'all'">
+(tr_mb_id = #{search}
+OR tr_unique_id = #{search}
+) AND
+</if>
+</if>
+<if test="trIdx != null">tr_idx = #{trIdx} AND</if>
+<if test="trMonth != null">tr_month = #{trMonth} AND</if>
+<if test="trYear != null">tr_year = #{trYear} AND</if>
+<if test="trDate != null">tr_date = #{trDate} AND</if>
+<if test="trMbIdx != null">tr_mb_idx = #{trMbIdx} AND</if>
+<if test="trMbId != null">tr_mb_id = #{trMbId} AND</if>
+<if test="trUpdateType != null">tr_update_type = #{trUpdateType} AND</if>
+<if test="trType != null">tr_type = #{trType} AND</if>
+<if test="trTkIdx != null">(tr_tk_idx IS NULL OR tr_tk_idx = #{trTkIdx}) AND</if>
+<if test="trTkSymbol != null">tr_tk_symbol = #{trTkSymbol} AND</if>
+<if test="trUniqueId != null">tr_unique_id = #{trUniqueId} AND</if>
+<if test="trState != null">tr_state = #{trState} AND</if>
+<if test="trTypeList != null">tr_type IN <foreach collection="trTypeList" item="item" index="index" separator="," open="(" close=")">#{item} </foreach> AND </if>
+<if test="trTkIdxList != null">tr_tk_idx IN <foreach collection="trTkIdxList" item="item" index="index" separator="," open="(" close=")">#{item} </foreach> AND </if>
+<if test="trIdxOver != null">tr_idx >= #{trIdxOver} AND</if>
+<if test="searchStartDate != null and searchStartDate != ''">tr_create_date >= #{searchStartDate} AND</if>
+<if test="searchEndDate != null and searchEndDate != ''">#{searchEndDate} >= tr_create_date AND</if>
+<if test="apiStartDate != null and apiStartDate != ''">tr_date >= #{apiStartDate} AND</if>
+<if test="apiEndDate != null and apiEndDate != ''">#{apiEndDate} >= tr_date AND</if>
+<if test="apiDate != null and apiDate != ''">tr_date = #{apiDate} AND</if>
+<if test="symbol != null">tr_tk_symbol = #{symbol} AND</if>
+<if test="trTypeListIn != null">tr_type IN <foreach collection="trTypeListIn" item="item" index="index" separator="," open="(" close=")">#{item}</foreach> AND</if>
+<if test="trTypeListNotIn != null">tr_type NOT IN <foreach collection="trTypeListNotIn" item="item" index="index" separator="," open="(" close=")">#{item}</foreach> AND</if>
+</trim>
+</sql>
+
+<insert id="insert" parameterType="TransactionVO" useGeneratedKeys="true" keyProperty="trIdx">
+INSERT INTO z_transaction
+<trim prefix="(" suffix=")" suffixOverrides=",">
+<if test="trYear != null">tr_year,</if>
+<if test="trMonth != null" >tr_month,</if>
+<if test="trDate != null">tr_date,</if>
+<if test="trMbIdx != null">tr_mb_idx,</if>
+<if test="trMbId != null">tr_mb_id,</if>
+<if test="trUpdateType != null" >tr_update_type,</if>
+<if test="trType != null" >tr_type,</if>
+<if test="trUniqueId != null" >tr_unique_id,</if>
+<if test="trState != null">tr_state,</if>
+<if test="trTkIdx != null">tr_tk_idx,</if>
+<if test="trTkSymbol != null">tr_tk_symbol,</if>
+<if test="trAmount != null">tr_amount,</if>
+<if test="trPointBefore != null">tr_point_before,</if>
+<if test="trPointAfter != null">tr_point_after,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides=",">
+<if test="trYear != null">#{trYear,jdbcType=VARCHAR},</if>
+<if test="trMonth != null" >#{trMonth,jdbcType=VARCHAR},</if>
+<if test="trDate != null">#{trDate,jdbcType=VARCHAR},</if>
+<if test="trMbIdx != null">#{trMbIdx,jdbcType=VARCHAR},</if>
+<if test="trMbId != null">#{trMbId,jdbcType=VARCHAR},</if>
+<if test="trUpdateType != null" >#{trUpdateType,jdbcType=INTEGER},</if>
+<if test="trType != null" >#{trType,jdbcType=INTEGER},</if>
+<if test="trUniqueId != null" >#{trUniqueId,jdbcType=VARCHAR},</if>
+<if test="trState != null">#{trState,jdbcType=TINYINT},</if>
+<if test="trTkIdx != null">#{trTkIdx,jdbcType=INTEGER},</if>
+<if test="trTkSymbol != null">#{trTkSymbol,jdbcType=VARCHAR},</if>
+<if test="trAmount != null">#{trAmount,jdbcType=DECIMAL},</if>
+<if test="trPointBefore != null">#{trPointBefore,jdbcType=DECIMAL},</if>
+<if test="trPointAfter != null">#{trPointAfter,jdbcType=DECIMAL},</if>
+</trim>
+</insert>
+
+<update id="update" parameterType="TransactionVO">
+UPDATE z_transaction
+<set>
+<if test="trState != null">tr_state = #{trState,jdbcType=TINYINT},</if>
+</set>
+WHERE tr_idx = #{trIdx}
+</update>
+
+
+<select id="selectBySearchForApi" parameterType="hashmap" resultMap="ApiResultMap">SELECT <include refid="Api_Column_List"/> <include refid="JoinTableFrom"/> <where> <include refid="BaseSearchQuery"/> </where> <if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if> <if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if> <if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> <include refid="JoinTableFrom"/> <where> <include refid="BaseSearchQuery"/> </where> <if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if> <if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if> <if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectByIndex" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> <include refid="JoinTableFrom"/> WHERE tr_idx = #{idx} </select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> <include refid="JoinTableFrom"/> <if test="orderColumn != null">Order by ${orderColumn} ${order}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="countBySearch" parameterType="hashmap" resultType="Long">SELECT COUNT(*) <include refid="JoinTableFrom"/> <where><include refid="BaseSearchQuery"/></where></select>
+<select id="countAll" resultType="Long">SELECT COUNT(*) <include refid="JoinTableFrom"/></select>
+<delete id="deleteByIndex" parameterType="Long">DELETE <include refid="JoinTableFrom"/> WHERE tr_idx = #{idx}</delete>
+
+
+</mapper>

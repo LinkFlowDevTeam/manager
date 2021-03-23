@@ -1,0 +1,8 @@
+{
+  "returnCode": 0,
+  "description": "Success",
+  "extraMessage": null,
+  "data": {
+    "appVersion": "1.0.1"
+  }
+}

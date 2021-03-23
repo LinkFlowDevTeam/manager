@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.CoinmarketcapDao">
+
+<resultMap id="BaseResultMap" type="CoinmarketcapVO" >
+<id column="ck_idx" property="ckIdx" jdbcType="INTEGER" />
+<result column="ck_ticker_state" property="ckTickerState" jdbcType="TINYINT" />
+<result column="ck_chart_state" property="ckChartState" jdbcType="TINYINT" />
+<result column="ck_ticker_url" property="ckTickerUrl" jdbcType="VARCHAR" />
+<result column="ck_chart_url" property="ckChartUrl" jdbcType="VARCHAR" />
+<result column="ck_tk_idx" property="ckTkIdx" jdbcType="INTEGER" />
+<result column="ck_tk_symbol" property="ckTkSymbol" jdbcType="VARCHAR" />
+<result column="ck_key" property="ckKey" jdbcType="VARCHAR" />
+<result column="ck_convert_currency" property="ckConvertCurrency" jdbcType="VARCHAR" />
+</resultMap>
+
+<sql id="BaseSearchQuery">
+<trim suffixOverrides="AND">
+<if test="ckIdx != null">ck_idx = #{ckIdx} AND</if>
+<if test="ckTickerState != null">ck_ticker_state = #{ckTickerState} AND</if>
+<if test="ckChartState != null">ck_chart_state = #{ckChartState} AND</if>
+<if test="ckTkIdx != null">ck_tk_idx = #{ckTkIdx} AND</if>
+<if test="ckTkSymbol != null">ck_tk_symbol = #{ckTkSymbol} AND</if>
+</trim>
+</sql>
+
+<sql id="Base_Column_List" >ck_idx,ck_ticker_url,ck_chart_url,ck_tk_idx,ck_tk_symbol,ck_ticker_state,ck_chart_state,ck_key,ck_convert_currency</sql>
+
+<insert id="insert" parameterType="CoinmarketcapVO" >
+insert into z_coinmarketcap
+<trim prefix="(" suffix=")" suffixOverrides="," >
+<if test="ckIdx != null" >ck_idx,</if>
+<if test="ckTickerState != null" >ck_ticker_state,</if>
+<if test="ckChartState != null" >ck_chart_state,</if>
+<if test="ckTkIdx != null" >ck_tk_idx,</if>
+<if test="ckTkSymbol != null" >ck_tk_symbol,</if>
+<if test="ckTickerUrl != null" >ck_ticker_url,</if>
+<if test="ckChartUrl != null" >ck_chart_url,</if>
+<if test="ckKey != null" >ck_key,</if>
+<if test="ckConvertCurrency != null" >ck_convert_currency,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides="," >
+<if test="ckIdx != null" >#{ckIdx,jdbcType=INTEGER},</if>
+<if test="ckTickerState != null" >#{ckTickerState,jdbcType=VARCHAR},</if>
+<if test="ckChartState != null" >#{ckChartState,jdbcType=TINYINT},</if>
+<if test="ckTkIdx != null" >#{ckTkIdx,jdbcType=TINYINT},</if>
+<if test="ckTickerUrl != null" >#{ckTickerUrl,jdbcType=VARCHAR},</if>
+<if test="ckChartUrl != null" >#{ckChartUrl,jdbcType=VARCHAR},</if>
+<if test="ckKey != null" >#{ckKey,jdbcType=VARCHAR},</if>
+<if test="ckTkSymbol != null" >#{ckTkSymbol,jdbcType=VARCHAR},</if>
+<if test="ckConvertCurrency != null" >#{ckConvertCurrency,jdbcType=VARCHAR},</if>
+</trim>
+</insert>
+<update id="update" parameterType="CoinmarketcapVO" >
+update z_coinmarketcap
+<set >
+<if test="ckTickerState != null" >ck_ticker_state = #{ckTickerState,jdbcType=VARCHAR},</if>
+<if test="ckChartState != null" >ck_chart_state = #{ckChartState,jdbcType=TINYINT},</if>
+<if test="ckTickerUrl != null" >ck_ticker_url = #{ckTickerUrl,jdbcType=VARCHAR},</if>
+<if test="ckChartUrl != null" >ck_chart_url = #{ckChartUrl,jdbcType=VARCHAR},</if>
+<if test="ckKey != null" >ck_key = #{ckKey,jdbcType=VARCHAR},</if>
+<if test="ckConvertCurrency != null" >ck_convert_currency = #{ckConvertCurrency,jdbcType=VARCHAR},</if>
+
+</set>
+where ck_idx = #{ckIdx,jdbcType=INTEGER}
+</update>
+
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_coinmarketcap <where> <include refid="BaseSearchQuery"/> </where> <if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if> <if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if> <if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_coinmarketcap <if test="orderColumn != null">Order by ${orderColumn} ${order}</if> <if test="limit != null">LIMIT #{limit}</if> </select>
+<select id="countBySearch" parameterType="hashmap" resultType="Integer">SELECT COUNT(*) FROM z_coinmarketcap <where> <include refid="BaseSearchQuery"/> </where> </select>
+<select id="countAll" resultType="Integer">SELECT COUNT(*) FROM z_coinmarketcap </select>
+
+<select id="selectByIndex" resultMap="BaseResultMap" parameterType="java.lang.Integer" >select <include refid="Base_Column_List" /> from z_coinmarketcap where ck_idx = #{ckIdx,jdbcType=INTEGER} </select>
+<delete id="deleteByIndex" parameterType="java.lang.Integer" >delete from z_coinmarketcap where ck_idx = #{ckIdx,jdbcType=INTEGER} </delete>
+</mapper>

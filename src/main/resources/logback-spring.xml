@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+
+    <appender name="RootFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/linkFlow/log/manager.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>/linkFlow/log/history/manager_%d{yyyy-MM-dd}.log</FileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder><pattern>%d{HH:mm:ss.SSS} %-5level %logger{0} - %msg%n</pattern></encoder>
+    </appender>
+
+    <appender name="springConsoleAppender" class="ch.qos.logback.core.ConsoleAppender"><encoder><pattern>%d{HH:mm:ss.SSS} %green([Spring]) %highlight(%-5level) %logger{0} - %msg%n</pattern></encoder></appender>
+    <appender name="myBatisConsoleAppender" class="ch.qos.logback.core.ConsoleAppender"><encoder><pattern>%d{HH:mm:ss.SSS} %boldCyan([MyBatis]) %highlight(%-5level) %logger{0} - %msg%n</pattern></encoder></appender>
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender"><encoder><pattern>%d{HH:mm:ss.SSS} %boldMagenta([Root]) %highlight(%-5level) %logger{0}.%M - %msg%n</pattern></encoder></appender>
+    <appender name="CommonConsole" class="ch.qos.logback.core.ConsoleAppender"><encoder><pattern>%d{HH:mm:ss.SSS} %boldMagenta([Root]) %highlight(%-5level) %logger{0}.%M - %msg%n</pattern></encoder></appender>
+    <logger name="org.apache.catalina" additivity="false"><level value="INFO"/><appender-ref ref="console"/></logger>
+    <logger name="org.springframework" additivity="false"><level value="WARN"/><appender-ref ref="springConsoleAppender"/></logger>
+    <logger name="org.mybatis.spring" additivity="true"><level value="INFO"/><appender-ref ref="myBatisConsoleAppender"/></logger>
+    <logger name="jdbc.sqlonly" additivity="true"><level value="OFF"/></logger>
+    <logger name="com.linkFlow.common" additivity="false"><level value="INFO"/><appender-ref ref="CommonConsole"/></logger>
+    <root level="INFO"><appender-ref ref="console"/><appender-ref ref="RootFileAppender"/></root>
+</configuration>

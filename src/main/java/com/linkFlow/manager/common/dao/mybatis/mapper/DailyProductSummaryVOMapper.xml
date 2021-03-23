@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.DailyProductSummaryDao" >
+
+<resultMap id="BaseResultMap" type="DailyProductSummaryVO" >
+<id column="ds_idx" property="dsIdx" jdbcType="INTEGER" />
+<result column="ds_year" property="dsYear" jdbcType="VARCHAR" />
+<result column="ds_month" property="dsMonth" jdbcType="VARCHAR" />
+<result column="ds_date" property="dsDate" jdbcType="VARCHAR" />
+<result column="ds_update_date" property="dsUpdateDate" jdbcType="TIMESTAMP" />
+<result column="ds_flag_fix" property="dsFlagFix" jdbcType="TINYINT" />
+<result column="ds_tk_idx" property="dsTkIdx" jdbcType="INTEGER" />
+<result column="ds_tk_symbol" property="dsTkSymbol" jdbcType="VARCHAR" />
+<result column="ds_sum_accumulated_total" property="dsSumAccumulatedTotal" jdbcType="DECIMAL" />
+<result column="ds_sum_accumulated_base" property="dsSumAccumulatedBase" jdbcType="DECIMAL" />
+<result column="ds_sum_accumulated_interest" property="dsSumAccumulatedInterest" jdbcType="DECIMAL" />
+<result column="ds_count_deposit" property="dsCountDeposit" jdbcType="INTEGER" />
+<result column="ds_sum_deposit" property="dsSumDeposit" jdbcType="DECIMAL" />
+<result column="ds_count_interest" property="dsCountInterest" jdbcType="INTEGER" />
+<result column="ds_sum_interest" property="dsSumInterest" jdbcType="DECIMAL" />
+<result column="ds_count_withdraw" property="dsCountWithdraw" jdbcType="INTEGER" />
+<result column="ds_sum_withdraw" property="dsSumWithdraw" jdbcType="DECIMAL" />
+<result column="ds_count_fee" property="dsCountFee" jdbcType="INTEGER" />
+<result column="ds_sum_fee" property="dsSumFee" jdbcType="DECIMAL" />
+</resultMap>
+
+<resultMap id="ApiResultMap" type="DailyProductSummaryVOForApi" >
+<result column="ds_month" property="month" jdbcType="VARCHAR" />
+<result column="ds_date" property="date" jdbcType="VARCHAR" />
+<result column="ds_tk_idx" property="tokenId" jdbcType="INTEGER" />
+<result column="ds_tk_symbol" property="symbol" jdbcType="VARCHAR" />
+<result column="ds_sum_accumulated_total" property="sumAccumulatedTotal" jdbcType="DECIMAL" />
+<result column="ds_sum_accumulated_base" property="sumAccumulatedBase" jdbcType="DECIMAL" />
+<result column="ds_sum_accumulated_interest" property="sumAccumulatedInterest" jdbcType="DECIMAL" />
+<result column="ds_count_deposit" property="countDeposit" jdbcType="INTEGER" />
+<result column="ds_sum_deposit" property="sumDeposit" jdbcType="DECIMAL" />
+<result column="ds_count_interest" property="countInterest" jdbcType="INTEGER" />
+<result column="ds_sum_interest" property="sumInterest" jdbcType="DECIMAL" />
+</resultMap>
+
+
+<sql id="Base_Column_List" >ds_idx, ds_year, ds_month, ds_date, ds_update_date, ds_flag_fix, ds_tk_idx,ds_tk_symbol,ds_sum_accumulated_total, ds_sum_accumulated_base, ds_sum_accumulated_interest, ds_count_deposit,ds_sum_deposit,ds_count_interest,ds_sum_interest, ds_count_withdraw, ds_sum_withdraw, ds_count_fee, ds_sum_fee</sql>
+<sql id="Api_Column_List" >ds_month,ds_date,ds_tk_idx,ds_tk_symbol,ds_sum_accumulated_total,ds_sum_accumulated_base,ds_sum_accumulated_interest,ds_count_deposit,ds_sum_deposit,ds_count_interest,ds_sum_interest</sql>
+
+<sql id="BaseSearchQuery">
+<trim suffixOverrides="AND">
+<if test="queryColumn != null and search != ''">
+<if test="queryColumn == 'all'">
+</if>
+</if>
+<if test="dsIdx != null">ds_idx = #{dsIdx} AND</if>
+<if test="dsYear != null">ds_year = #{dsYear} AND</if>
+<if test="dsMonth != null">ds_month = #{dsMonth} AND</if>
+<if test="dsDate != null">ds_date = #{dsDate} AND</if>
+<if test="dsFlagFix != null">ds_flag_fix = #{dsFlagFix} AND</if>
+<if test="dsState != null">ds_state = #{dsState} AND</if>
+<if test="dsTkIdx != null">ds_tk_idx= #{dsTkIdx} AND</if>
+<if test="dsTkSymbol != null">ds_tk_symbol= #{dsTkSymbol} AND</if>
+<if test="searchStartDate != null and searchStartDate != ''">ds_date >= #{searchStartDate} AND</if>
+<if test="searchEndDate != null and searchEndDate != ''">#{searchEndDate} >= ds_date AND</if>
+</trim>
+</sql>
+
+<select id="selectBySearchForApi" parameterType="hashmap" resultMap="ApiResultMap">SELECT <include refid="Api_Column_List"/> FROM z_daily_product_summary  <where><include refid="BaseSearchQuery"/></where><if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if><if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_daily_product_summary  <where><include refid="BaseSearchQuery"/></where><if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if><if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="countBySearch" parameterType="hashmap" resultType="Integer">SELECT COUNT(*) FROM z_daily_product_summary  <where><include refid="BaseSearchQuery"/></where></select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_daily_product_summary <if test="orderColumn != null"> Order by ${orderColumn} ${order} </if> <if test="limit != null">LIMIT #{limit}</if></select>
+<select id="countAll" resultType="Integer">SELECT COUNT(*) FROM z_daily_product_summary</select>
+<select id="selectByIndex" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/>FROM z_daily_product_summary  WHERE ds_idx = #{idx}</select>
+<delete id="deleteByIndex" parameterType="Integer">DELETE FROM z_daily_product_summary WHERE ds_idx = #{idx}</delete>
+
+<insert id="insert" parameterType="DailyProductSummaryVO" >
+insert into z_daily_product_summary
+<trim prefix="(" suffix=")" suffixOverrides="," >
+<if test="dsIdx != null" >ds_idx,</if>
+<if test="dsYear != null" >ds_year,</if>
+<if test="dsMonth != null" >ds_month,</if>
+<if test="dsDate != null" >ds_date,</if>
+<if test="dsUpdateDate != null" >ds_update_date,</if>
+<if test="dsFlagFix != null" >ds_flag_fix,</if>
+<if test="dsTkIdx != null" >ds_tk_idx,</if>
+<if test="dsTkSymbol != null" >ds_tk_symbol,</if>
+<if test="dsSumAccumulatedTotal != null" >ds_sum_accumulated_total,</if>
+<if test="dsSumAccumulatedBase != null" >ds_sum_accumulated_base,</if>
+<if test="dsSumAccumulatedInterest != null" >ds_sum_accumulated_interest,</if>
+<if test="dsCountDeposit != null" >ds_count_deposit,</if>
+<if test="dsSumDeposit != null" >ds_sum_deposit,</if>
+<if test="dsCountInterest != null" >ds_count_interest,</if>
+<if test="dsSumInterest != null" >ds_sum_interest,</if>
+<if test="dsCountWithdraw != null" >ds_count_withdraw,</if>
+<if test="dsSumWithdraw != null" >ds_sum_withdraw,</if>
+<if test="dsCountFee != null" >ds_count_fee,</if>
+<if test="dsSumFee != null" >ds_sum_fee,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides="," >
+<if test="dsIdx != null" >#{dsIdx,jdbcType=INTEGER},</if>
+<if test="dsYear != null" >#{dsYear,jdbcType=VARCHAR},</if>
+<if test="dsMonth != null" >#{dsMonth,jdbcType=VARCHAR},</if>
+<if test="dsDate != null" >#{dsDate,jdbcType=VARCHAR},</if>
+<if test="dsUpdateDate != null" >#{dsUpdateDate,jdbcType=TIMESTAMP},</if>
+<if test="dsFlagFix != null" >#{dsFlagFix,jdbcType=TINYINT},</if>
+<if test="dsTkIdx != null" >#{dsTkIdx,jdbcType=INTEGER},</if>
+<if test="dsTkSymbol != null" >#{dsTkSymbol,jdbcType=VARCHAR},</if>
+<if test="dsSumAccumulatedTotal != null" >#{dsSumAccumulatedTotal,jdbcType=DECIMAL},</if>
+<if test="dsSumAccumulatedBase != null" >#{dsSumAccumulatedBase,jdbcType=DECIMAL},</if>
+<if test="dsSumAccumulatedInterest != null" >#{dsSumAccumulatedInterest,jdbcType=DECIMAL},</if>
+<if test="dsCountDeposit != null" >#{dsCountDeposit,jdbcType=INTEGER},</if>
+<if test="dsSumDeposit != null" >#{dsSumDeposit,jdbcType=DECIMAL},</if>
+<if test="dsCountInterest != null" >#{dsCountInterest,jdbcType=INTEGER},</if>
+<if test="dsSumInterest != null" >#{dsSumInterest,jdbcType=DECIMAL},</if>
+<if test="dsCountWithdraw != null" >#{dsCountWithdraw,jdbcType=INTEGER},</if>
+<if test="dsSumWithdraw != null" >#{dsSumWithdraw,jdbcType=DECIMAL},</if>
+<if test="dsCountFee != null" >#{dsCountFee,jdbcType=INTEGER},</if>
+<if test="dsSumFee != null" >#{dsSumFee,jdbcType=DECIMAL},</if>
+</trim>
+</insert>
+
+<update id="update" parameterType="DailyProductSummaryVO" >
+update z_daily_product_summary
+<set >
+ds_update_date = SYSDATE(),
+<if test="dsFlagFix != null" >ds_flag_fix = #{dsFlagFix,jdbcType=TINYINT},</if>
+<if test="dsSumAccumulatedTotal != null" >ds_sum_accumulated_total = #{dsSumAccumulatedTotal,jdbcType=DECIMAL},</if>
+<if test="dsSumAccumulatedBase != null" >ds_sum_accumulated_base = #{dsSumAccumulatedBase,jdbcType=DECIMAL},</if>
+<if test="dsSumAccumulatedInterest != null" >ds_sum_accumulated_interest = #{dsSumAccumulatedInterest,jdbcType=DECIMAL},</if>
+<if test="dsCountDeposit != null" >ds_count_deposit = #{dsCountDeposit,jdbcType=INTEGER},</if>
+<if test="dsSumDeposit != null" >ds_sum_deposit = #{dsSumDeposit,jdbcType=DECIMAL},</if>
+<if test="dsCountInterest != null" >ds_count_interest = #{dsCountInterest,jdbcType=INTEGER},</if>
+<if test="dsSumInterest != null" >ds_sum_interest = #{dsSumInterest,jdbcType=DECIMAL},</if>
+<if test="dsCountWithdraw != null" >ds_count_withdraw = #{dsCountWithdraw,jdbcType=INTEGER},</if>
+<if test="dsSumWithdraw != null" >ds_sum_withdraw = #{dsSumWithdraw,jdbcType=DECIMAL},</if>
+<if test="dsCountFee != null" >ds_count_fee = #{dsCountFee,jdbcType=INTEGER},</if>
+<if test="dsSumFee != null" >ds_sum_fee = #{dsSumFee,jdbcType=DECIMAL},</if>
+</set>
+where ds_idx = #{dsIdx,jdbcType=INTEGER}
+</update>
+
+<update id="updateByKey" parameterType="DailyProductSummaryVO" >
+update z_daily_product_summary
+<set >
+ds_update_date = SYSDATE(),
+<if test="dsFlagFix != null" >ds_flag_fix = #{dsFlagFix,jdbcType=TINYINT},</if>
+<if test="dsSumAccumulatedTotal != null" >ds_sum_accumulated_total = #{dsSumAccumulatedTotal,jdbcType=DECIMAL},</if>
+<if test="dsSumAccumulatedBase != null" >ds_sum_accumulated_base = #{dsSumAccumulatedBase,jdbcType=DECIMAL},</if>
+<if test="dsSumAccumulatedInterest != null" >ds_sum_accumulated_interest = #{dsSumAccumulatedInterest,jdbcType=DECIMAL},</if>
+<if test="dsCountDeposit != null" >ds_count_deposit = #{dsCountDeposit,jdbcType=INTEGER},</if>
+<if test="dsSumDeposit != null" >ds_sum_deposit = #{dsSumDeposit,jdbcType=DECIMAL},</if>
+<if test="dsCountInterest != null" >ds_count_interest = #{dsCountInterest,jdbcType=INTEGER},</if>
+<if test="dsSumInterest != null" >ds_sum_interest = #{dsSumInterest,jdbcType=DECIMAL},</if>
+<if test="dsCountWithdraw != null" >ds_count_withdraw = #{dsCountWithdraw,jdbcType=INTEGER},</if>
+<if test="dsSumWithdraw != null" >ds_sum_withdraw = #{dsSumWithdraw,jdbcType=DECIMAL},</if>
+<if test="dsCountFee != null" >ds_count_fee = #{dsCountFee,jdbcType=INTEGER},</if>
+<if test="dsSumFee != null" >ds_sum_fee = #{dsSumFee,jdbcType=DECIMAL},</if>
+</set>
+where ds_idx > 0 AND ds_date = #{dsDate,jdbcType=VARCHAR} AND ds_tk_idx = #{dsTkIdx,jdbcType=INTEGER}
+</update>
+
+</mapper>

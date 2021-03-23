@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.TransferManagerQueueDao" >
+<resultMap id="BaseResultMap" type="TransferManagerQueueVO" >
+<id column="tq_idx" property="tqIdx" jdbcType="INTEGER" />
+<result column="tq_address" property="tqAddress" jdbcType="VARCHAR" />
+<result column="tq_name" property="tqName" jdbcType="VARCHAR" />
+<result column="tq_tk_idx" property="tqTkIdx" jdbcType="INTEGER" />
+<result column="tq_tk_symbol" property="tqTkSymbol" jdbcType="VARCHAR" />
+<result column="tq_state" property="tqState" jdbcType="TINYINT" />
+<result column="tq_create_date" property="tqCreateDate" jdbcType="TIMESTAMP" />
+<result column="tq_target_idx" property="tqTargetIdx" jdbcType="BIGINT" />
+<result column="tq_target_state" property="tqTargetState" jdbcType="TINYINT" />
+<result column="tq_target_type" property="tqTargetType" jdbcType="VARCHAR" />
+<result column="tq_target_key" property="tqTargetKey" jdbcType="VARCHAR" />
+<result column="tq_request_date" property="tqRequestDate" jdbcType="TIMESTAMP" />
+<result column="tq_finish_date" property="tqFinishDate" jdbcType="TIMESTAMP" />
+<result column="tq_eth_point" property="tqEthPoint" jdbcType="DECIMAL" />
+<result column="tq_erc20_point" property="tqErc20Point" jdbcType="DECIMAL" />
+<result column="tq_erc20_date" property="tqErc20Date" jdbcType="TIMESTAMP" />
+<result column="tq_data1" property="tqData1" jdbcType="LONGVARCHAR" />
+<result column="tq_data2" property="tqData2" jdbcType="LONGVARCHAR" />
+<result column="tq_data3" property="tqData3" jdbcType="LONGVARCHAR" />
+</resultMap>
+
+<sql id="BaseSearchQuery">
+<trim suffixOverrides="AND">
+<if test="tqIdx != null">tq_idx = #{tqIdx} AND</if>
+<if test="tqAddress != null">tq_address = #{tqAddress} AND</if>
+<if test="tqTkIdx != null">tq_tk_idx = #{tqTkIdx} AND</if>
+<if test="tqTkSymbol != null">tq_tk_symbol = #{tqTkSymbol} AND</if>
+<if test="tqState != null">tq_state = #{tqState} AND</if>
+<if test="tqTargetIdx != null">tq_target_idx = #{tqTargetIdx} AND</if>
+<if test="tqTargetState != null">tq_target_state = #{tqTargetState} AND</if>
+<if test="tqTargetType != null">tq_target_type = #{tqTargetType} AND</if>
+<if test="tqTargetKey != null">tq_target_key = #{tqTargetKey} AND</if>
+<if test="excludeGasFeeOnly != null">tq_state IN (0, 1) AND </if>
+</trim>
+</sql>
+
+<sql id="Base_Column_List" >tq_idx, tq_address, tq_name, tq_tk_idx, tq_tk_symbol, tq_state, tq_create_date, tq_target_idx,tq_target_state, tq_target_type, tq_target_key, tq_request_date, tq_finish_date,tq_eth_point,tq_erc20_point,tq_erc20_date, tq_data1, tq_data2, tq_data3</sql>
+
+<insert id="insert" parameterType="TransferManagerQueueVO" >
+insert into z_transfer_manager_queue
+<trim prefix="(" suffix=")" suffixOverrides="," >
+<if test="tqAddress != null" >tq_address,</if>
+<if test="tqName != null" >tq_name,</if>
+<if test="tqTkIdx != null" >tq_tk_idx,</if>
+<if test="tqTkSymbol != null" >tq_tk_symbol,</if>
+<if test="tqState != null" >tq_state,</if>
+<if test="tqCreateDate != null" >tq_create_date,</if>
+<if test="tqTargetIdx != null" >tq_target_idx,</if>
+<if test="tqTargetState != null" >tq_target_state,</if>
+<if test="tqTargetType != null" >tq_target_type,</if>
+<if test="tqTargetKey != null" >tq_target_key,</if>
+<if test="tqRequestDate != null" >tq_request_date,</if>
+<if test="tqFinishDate != null" >tq_finish_date,</if>
+<if test="tqData1 != null" >tq_data1,</if>
+<if test="tqData2 != null" >tq_data2,</if>
+<if test="tqData3 != null" >tq_data3,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides="," >
+<if test="tqAddress != null" >#{tqAddress,jdbcType=VARCHAR},</if>
+<if test="tqName != null" >#{tqName,jdbcType=VARCHAR},</if>
+<if test="tqTkIdx != null" >#{tqTkIdx,jdbcType=INTEGER},</if>
+<if test="tqTkSymbol != null" >#{tqTkSymbol,jdbcType=VARCHAR},</if>
+<if test="tqState != null" >#{tqState,jdbcType=TINYINT},</if>
+<if test="tqCreateDate != null" >#{tqCreateDate,jdbcType=TIMESTAMP},</if>
+<if test="tqTargetIdx != null" >#{tqTargetIdx,jdbcType=BIGINT},</if>
+<if test="tqTargetState != null" >#{tqTargetState,jdbcType=TINYINT},</if>
+<if test="tqTargetType != null" >#{tqTargetType,jdbcType=VARCHAR},</if>
+<if test="tqTargetKey != null" >#{tqTargetKey,jdbcType=VARCHAR},</if>
+<if test="tqRequestDate != null" >#{tqRequestDate,jdbcType=TIMESTAMP},</if>
+<if test="tqFinishDate != null" >#{tqFinishDate,jdbcType=TIMESTAMP},</if>
+<if test="tqData1 != null" >#{tqData1,jdbcType=LONGVARCHAR},</if>
+<if test="tqData2 != null" >#{tqData2,jdbcType=LONGVARCHAR},</if>
+<if test="tqData3 != null" >#{tqData3,jdbcType=LONGVARCHAR},</if>
+</trim>
+</insert>
+
+<update id="update" parameterType="TransferManagerQueueVO" >
+update z_transfer_manager_queue
+<set >
+<if test="tqAddress != null" >tq_address = #{tqAddress,jdbcType=VARCHAR},</if>
+<if test="tqName != null" >tq_name = #{tqName,jdbcType=VARCHAR},</if>
+<if test="tqTkIdx != null" >tq_tk_idx = #{tqTkIdx,jdbcType=INTEGER},</if>
+<if test="tqTkSymbol != null" >tq_tk_symbol = #{tqTkSymbol,jdbcType=VARCHAR},</if>
+<if test="tqState != null" >tq_state = #{tqState,jdbcType=TINYINT},</if>
+<if test="tqCreateDate != null" >tq_create_date = #{tqCreateDate,jdbcType=TIMESTAMP},</if>
+<if test="tqTargetIdx != null" >tq_target_idx = #{tqTargetIdx,jdbcType=BIGINT},</if>
+<if test="tqTargetState != null" >tq_target_state = #{tqTargetState,jdbcType=TINYINT},</if>
+<if test="tqTargetType != null" >tq_target_type = #{tqTargetType,jdbcType=VARCHAR},</if>
+<if test="tqTargetKey != null" >tq_target_key = #{tqTargetKey,jdbcType=VARCHAR},</if>
+<if test="tqRequestDate != null" >tq_request_date = #{tqRequestDate,jdbcType=TIMESTAMP},</if>
+<if test="tqFinishDate != null" >tq_finish_date = #{tqFinishDate,jdbcType=TIMESTAMP},</if>
+<if test="tqData1 != null" >tq_data1 = #{tqData1,jdbcType=LONGVARCHAR},</if>
+<if test="tqData2 != null" >tq_data2 = #{tqData2,jdbcType=LONGVARCHAR},</if>
+<if test="tqData3 != null" >tq_data3 = #{tqData3,jdbcType=LONGVARCHAR},</if>
+<if test="tqEthPoint != null" >tq_eth_point = #{tqEthPoint,jdbcType=DECIMAL},</if>
+<if test="tqErc20Point != null" >tq_erc20_point = #{tqErc20Point,jdbcType=DECIMAL},</if>
+<if test="tqErc20Date != null" >tq_erc20_date = #{tqErc20Date,jdbcType=TIMESTAMP},</if>
+</set>
+where tq_idx = #{tqIdx,jdbcType=INTEGER}
+</update>
+
+<select id="countDistinctWorker" parameterType="hashmap" resultType="Integer">SELECT COUNT(DISTINCT tq_address) FROM z_transfer_manager_queue <where> <include refid="BaseSearchQuery"/> </where> <if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if> <if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if> <if test="limit != null">LIMIT #{limit}</if> </select>
+
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_transfer_manager_queue <where> <include refid="BaseSearchQuery"/> </where> <if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if> <if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if> <if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_transfer_manager_queue <if test="orderColumn != null">Order by ${orderColumn} ${order}</if> <if test="limit != null">LIMIT #{limit}</if> </select>
+<select id="countBySearch" parameterType="hashmap" resultType="Integer">SELECT COUNT(*) FROM z_transfer_manager_queue <where> <include refid="BaseSearchQuery"/> </where> </select>
+<select id="countAll" resultType="Integer">SELECT COUNT(*) FROM z_transfer_manager_queue </select>
+<select id="selectByIndex" resultMap="BaseResultMap" parameterType="java.lang.Integer" >select <include refid="Base_Column_List" /> from z_transfer_manager_queue where tq_idx = #{tqIdx,jdbcType=INTEGER} </select>
+<delete id="deleteByIndex" parameterType="java.lang.Integer" >delete from z_transfer_manager_queue where tq_idx = #{tqIdx,jdbcType=INTEGER} </delete>
+</mapper>

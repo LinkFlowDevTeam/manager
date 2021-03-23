@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.TokenPointDao">
+
+<resultMap id="BaseResultMap" type="TokenPointVO" >
+<id column="tp_idx" property="tpIdx" jdbcType="BIGINT" />
+<result column="tp_tk_idx" property="tpTkIdx" jdbcType="INTEGER" />
+<result column="tp_tk_symbol" property="tpTkSymbol" jdbcType="VARCHAR" />
+<result column="tp_mb_idx" property="tpMbIdx" jdbcType="BIGINT" />
+<result column="tp_point" property="tpPoint" jdbcType="DECIMAL" />
+<result column="tp_locked_point" property="tpLockedPoint" jdbcType="DECIMAL" />
+<result column="tp_create_date" property="tpCreateDate" jdbcType="TIMESTAMP" />
+<result column="tp_update_date" property="tpUpdateDate" jdbcType="TIMESTAMP" />
+
+<association property="tokenInfoVO" javaType="TokenInfoVO" column="tk_idx" autoMapping="true" />
+<association property="memberVO" javaType="MemberVO" column="mb_idx" autoMapping="true" />
+</resultMap>
+
+<resultMap id="ApiResultMap" type="TokenPointVOForApi" >
+<result column="tp_tk_idx" property="tokenId" jdbcType="INTEGER" />
+<result column="tp_tk_symbol" property="symbol" jdbcType="VARCHAR" />
+<result column="tp_point" property="point" jdbcType="DECIMAL" />
+<result column="tp_locked_point" property="lockedPoint" jdbcType="DECIMAL" />
+</resultMap>
+
+<sql id="BaseSearchQuery">
+<trim suffixOverrides="AND">
+<if test="searchColumn != null and search != ''">
+<if test="searchColumn == 'all'">
+( mb.mb_id = #{search} ) AND
+</if>
+</if>
+<if test="tpIdx != null">tp_idx = #{tpIdx} AND</if>
+<if test="tpTkIdx != null">tp_tk_idx = #{tpTkIdx} AND</if>
+<if test="tpTkIdxList != null">tp_tk_idx IN <foreach collection="tpTkIdxList" item="item" index="index" separator="," open="(" close=")">#{item} </foreach> AND </if>
+<if test="tpTkSymbol != null">tp_tk_symbol = #{tpTkSymbol} AND</if>
+<if test="tpTkSymbolList != null">tp_tk_symbol IN <foreach collection="tpTkSymbolList" item="item" index="index" separator="," open="(" close=")">#{item} </foreach> AND </if>
+<if test="tpMbIdx != null">tp_mb_idx = #{tpMbIdx} AND</if>
+<if test="tpMbIdxList != null">tp_mb_idx IN <foreach collection="tpMbIdxList" item="item" index="index" separator="," open="(" close=")">#{item}</foreach> AND</if>
+<if test="searchStartDate != null and searchStartDate != ''">tp_create_date >= #{searchStartDate} AND</if>
+<if test="searchEndDate != null and searchEndDate != ''">#{searchEndDate} >= tp_create_date AND</if>
+</trim>
+</sql>
+
+<sql id="Base_Column_List" >tp_idx, tp_tk_idx,tp_tk_symbol,tp_mb_idx,tp_point,tp_locked_point,tp_create_date,tp_update_date</sql>
+<sql id="Api_Column_List" >tp_tk_idx,tp_tk_symbol,tp_point,tp_locked_point</sql>
+<sql id="Join_Column_List" >mb.*, tk.*</sql>
+
+<insert id="insert" parameterType="TokenPointVO" useGeneratedKeys="true" keyProperty="tpIdx">
+insert into z_token_point
+<trim prefix="(" suffix=")" suffixOverrides="," >
+<if test="tpTkIdx != null" >tp_tk_idx,</if>
+<if test="tpTkSymbol != null" >tp_tk_symbol,</if>
+<if test="tpMbIdx != null" >tp_mb_idx,</if>
+<if test="tpPoint != null" >tp_point,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides="," >
+<if test="tpTkIdx != null" >#{tpTkIdx,jdbcType=INTEGER},</if>
+<if test="tpTkSymbol != null" >#{tpTkSymbol,jdbcType=VARCHAR},</if>
+<if test="tpMbIdx != null" >#{tpMbIdx,jdbcType=INTEGER},</if>
+<if test="tpPoint != null" >#{tpPoint,jdbcType=DECIMAL},</if>
+</trim>
+</insert>
+
+<insert id="insertNotExist" parameterType="TokenPointVO" useGeneratedKeys="true" keyProperty="tpIdx">
+INSERT IGNORE INTO z_token_point
+<trim prefix="(" suffix=")" suffixOverrides="," >
+<if test="tpTkIdx != null" >tp_tk_idx,</if>
+<if test="tpTkSymbol != null" >tp_tk_symbol,</if>
+<if test="tpMbIdx != null" >tp_mb_idx,</if>
+<if test="tpPoint != null" >tp_point,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides="," >
+<if test="tpTkIdx != null" >#{tpTkIdx,jdbcType=INTEGER},</if>
+<if test="tpTkSymbol != null" >#{tpTkSymbol,jdbcType=VARCHAR},</if>
+<if test="tpMbIdx != null" >#{tpMbIdx,jdbcType=INTEGER},</if>
+<if test="tpPoint != null" >#{tpPoint,jdbcType=DECIMAL},</if>
+</trim>
+</insert>
+
+<update id="update" parameterType="TokenPointVO" >
+update z_token_point
+<set >
+tp_update_date = SYSDATE(),
+</set>
+where tp_idx = #{tpIdx,jdbcType=BIGINT}
+</update>
+
+<update id="addPoint" parameterType="hashmap">UPDATE z_token_point <set>tp_update_date = SYSDATE(), tp_point = tp_point + #{amount}</set><where>tp_idx = #{tpIdx,jdbcType=BIGINT} and #{amount} >= 0</where></update>
+<update id="subtractPoint" parameterType="hashmap">UPDATE z_token_point <set>tp_update_date = SYSDATE(), tp_point = tp_point - #{amount}</set><where>tp_idx = #{tpIdx,jdbcType=BIGINT} and #{amount} >= 0 AND tp_point - #{amount} >= 0</where></update>
+<update id="subtractPointForced" parameterType="hashmap">UPDATE z_token_point <set>tp_update_date = SYSDATE(), tp_point = tp_point - #{amount} </set><where> tp_idx = #{tpIdx,jdbcType=BIGINT} and #{amount} >= 0 </where></update>
+
+<update id="overwriteLockedPoint" parameterType="hashmap">UPDATE z_token_point <set>tp_update_date = SYSDATE(), tp_locked_point = #{amount} </set><where> tp_idx = #{tpIdx,jdbcType=BIGINT} and #{amount} >= 0 </where></update>
+
+<sql id="JoinTableFrom" >FROM z_token_point tp LEFT OUTER JOIN z_member mb ON tp.tp_mb_idx = mb.mb_idx LEFT OUTER JOIN z_token_info tk ON tk.tk_idx = tp.tp_tk_idx</sql>
+
+<select id="selectBySearchForApi" parameterType="hashmap" resultMap="ApiResultMap">SELECT <include refid="Api_Column_List"/> FROM z_token_point <where> <include refid="BaseSearchQuery"/> </where> <if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if> <if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if> <if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/>,<include refid="Join_Column_List"/> <include refid="JoinTableFrom"/><where> <include refid="BaseSearchQuery"/> </where> <if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if> <if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if> <if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/>,<include refid="Join_Column_List"/> <include refid="JoinTableFrom"/> <if test="orderColumn != null">Order by ${orderColumn} ${order}</if> <if test="limit != null">LIMIT #{limit}</if> </select>
+<select id="countBySearch" parameterType="hashmap" resultType="Long">SELECT COUNT(*) <include refid="JoinTableFrom"/> <where> <include refid="BaseSearchQuery"/> </where> </select>
+<select id="countAll" resultType="Long">SELECT COUNT(*) FROM z_token_point </select>
+
+<select id="selectByIndex" resultMap="BaseResultMap" parameterType="Long" >select <include refid="Base_Column_List"/>,<include refid="Join_Column_List"/> <include refid="JoinTableFrom"/> where tp_idx = #{tpIdx} </select>
+<delete id="deleteByIndex" parameterType="Long" >delete from z_token_point where tp_idx = #{tpIdx} </delete>
+
+
+<select id="selectBySearchForSum" parameterType="hashmap" resultType="TokenPointVOForSum">
+SELECT
+tp_tk_idx as tp_tk_idx,
+tp_tk_symbol as tp_tk_symbol,
+SUM(tp_point) as tp_point
+<include refid="JoinTableFrom"/>
+<where>
+<include refid="BaseSearchQuery"/>
+</where>
+<if test="groupByColumn != null">GROUP BY ${groupByColumn}</if>
+<if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if>
+<if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if>
+<if test="limit != null">LIMIT #{limit}</if>
+</select>
+
+<select id="selectBySearchListForSum" parameterType="hashmap" resultType="TokenPointVOForSum">
+SELECT
+tp_tk_symbol as tp_tk_symbol,
+SUM(tp_point) as tp_point
+<include refid="JoinTableFrom"/>
+<where>
+<include refid="BaseSearchQuery"/>
+</where>
+<if test="groupByColumn != null">GROUP BY ${groupByColumn}</if>
+<if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if>
+<if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if>
+<if test="limit != null">LIMIT #{limit}</if>
+</select>
+
+</mapper>

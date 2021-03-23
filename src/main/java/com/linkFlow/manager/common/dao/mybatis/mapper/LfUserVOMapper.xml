@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.LfUserDao">
+
+<resultMap id="BaseResultMap" type="LfUserVO" >
+<id column="lu_idx" property="luIdx" jdbcType="INTEGER" />
+<result column="lu_tk_idx" property="luTkIdx" jdbcType="INTEGER" />
+<result column="lu_mb_idx" property="luMbIdx" jdbcType="BIGINT" />
+<result column="lu_state" property="luState" jdbcType="TINYINT" />
+<result column="lu_create_date" property="luCreateDate" jdbcType="TIMESTAMP" />
+<result column="lu_expire_date" property="luExpireDate" jdbcType="TIMESTAMP" />
+<result column="lu_base_amount" property="luBaseAmount" jdbcType="DECIMAL" />
+
+<association property="memberVO" javaType="MemberVO" column="mb_idx" autoMapping="true" />
+<association property="tokenInfoVO" javaType="TokenInfoVO" column="tk_idx" autoMapping="true" />
+</resultMap>
+
+<resultMap id="ApiResultMap" type="LfUserVOForApi" >
+<result column="lu_state" property="state" jdbcType="TINYINT" />
+<result column="lu_create_date" property="createDate" jdbcType="TIMESTAMP" />
+<result column="lu_expire_date" property="expireDate" jdbcType="TIMESTAMP" />
+<result column="lu_base_amount" property="baseAmount" jdbcType="DECIMAL" />
+</resultMap>
+
+<resultMap id="SumResultMap" type="LfUserVOForSum" >
+<result column="countItem" property="countItem" jdbcType="INTEGER" />
+<result column="amount" property="amount" jdbcType="DECIMAL" />
+</resultMap>
+
+<sql id="Base_Column_List" >lu_idx, lu_tk_idx, lu_mb_idx, lu_state, lu_create_date, lu_expire_date, lu_base_amount, mb.*, tk.*</sql>
+<sql id="Api_Column_List" >lu_state, lu_create_date, lu_expire_date, lu_base_amount</sql>
+<sql id="JoinTableFrom" >FROM z_lf_user lu LEFT OUTER JOIN z_member mb ON lu.lu_mb_idx = mb.mb_idx LEFT OUTER JOIN z_token_info tk ON tk.tk_idx = lu.lu_tk_idx</sql>
+
+<sql id="BaseSearchQuery">
+<trim suffixOverrides="AND">
+<if test="queryColumn != null and search != ''">
+<if test="queryColumn == 'all'">
+(mb.mb_id = #{search} ) AND
+</if>
+</if>
+<if test="luIdx != null">lu_idx = #{luIdx} AND</if>
+<if test="luMbIdx != null">lu_mb_idx = #{luMbIdx} AND</if>
+<if test="luTkIdx != null">lu_tk_idx = #{luTkIdx} AND</if>
+<if test="luState != null">lu_state = #{luState} AND</if>
+<if test="luExpireDateUnder != null">#{luExpireDateUnder} >= lu_expire_date AND</if>
+</trim>
+</sql>
+
+<select id="selectBySearchForApi" parameterType="hashmap" resultMap="ApiResultMap">SELECT <include refid="Api_Column_List"/> FROM z_lf_user <where><include refid="BaseSearchQuery"/></where><if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if><if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> <include refid="JoinTableFrom"/> <where><include refid="BaseSearchQuery"/></where><if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if><if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectByIndex" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> <include refid="JoinTableFrom"/> WHERE lu_idx = #{idx} </select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> <include refid="JoinTableFrom"/> </select>
+<select id="countBySearch" parameterType="hashmap" resultType="Integer">SELECT COUNT(*) <include refid="JoinTableFrom"/> <where><include refid="BaseSearchQuery"/></where></select>
+<select id="countAll" resultType="Integer">SELECT COUNT(*) FROM z_lf_user</select>
+
+<insert id="insert" parameterType="LfUserVO" >
+insert into z_lf_user
+<trim prefix="(" suffix=")" suffixOverrides="," >
+<if test="luIdx != null" >lu_idx,</if>
+<if test="luTkIdx != null" >lu_tk_idx,</if>
+<if test="luMbIdx != null" >lu_mb_idx,</if>
+<if test="luState != null" >lu_state,</if>
+<if test="luCreateDate != null" >lu_create_date,</if>
+<if test="luExpireDate != null" >lu_expire_date,</if>
+<if test="luBaseAmount != null" >lu_base_amount,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides="," >
+<if test="luIdx != null" >#{luIdx,jdbcType=INTEGER},</if>
+<if test="luTkIdx != null" >#{luTkIdx,jdbcType=INTEGER},</if>
+<if test="luMbIdx != null" >#{luMbIdx,jdbcType=BIGINT},</if>
+<if test="luState != null" >#{luState,jdbcType=TINYINT},</if>
+<if test="luCreateDate != null" >#{luCreateDate,jdbcType=TIMESTAMP},</if>
+<if test="luExpireDate != null" >#{luExpireDate,jdbcType=TIMESTAMP},</if>
+<if test="luBaseAmount != null" >#{luBaseAmount,jdbcType=DECIMAL},</if>
+</trim>
+</insert>
+<update id="update" parameterType="LfUserVO" >
+update z_lf_user
+<set >
+<if test="luState != null" >lu_state = #{luState,jdbcType=TINYINT},</if>
+<if test="luCreateDate != null" >lu_create_date = #{luCreateDate,jdbcType=TIMESTAMP},</if>
+<if test="luExpireDate != null" >lu_expire_date = #{luExpireDate,jdbcType=TIMESTAMP},</if>
+</set>
+where lu_idx = #{luIdx,jdbcType=INTEGER}
+</update>
+
+<select id="selectSumBySearch" parameterType="hashmap" resultMap="SumResultMap">
+SELECT count(lu_idx) as countItem, sum(lu_base_amount) as amount
+<include refid="JoinTableFrom"/>
+<where>
+<include refid="BaseSearchQuery"/>
+</where>
+<if test="groupByColumn != null">GROUP BY ${groupByColumn}</if>
+<if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if>
+<if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if>
+<if test="limit != null">LIMIT #{limit}</if>
+</select>
+
+</mapper>

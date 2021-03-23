@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.TokenInfoDao">
+
+<resultMap id="BaseResultMap" type="TokenInfoVO" >
+<id column="tk_idx" property="tkIdx" jdbcType="INTEGER" />
+<!--<result column="tk_purpose" property="tkPurpose" jdbcType="TINYINT" />-->
+<result column="tk_order" property="tkOrder" jdbcType="TINYINT" />
+<result column="tk_address" property="tkAddress" jdbcType="VARCHAR" />
+<result column="tk_decimal" property="tkDecimal" jdbcType="TINYINT" />
+<result column="tk_rounding_point" property="tkRoundingPoint" jdbcType="TINYINT" />
+<result column="tk_market_name" property="tkMarketName" jdbcType="VARCHAR" />
+<result column="tk_symbol" property="tkSymbol" jdbcType="VARCHAR" />
+<result column="tk_state" property="tkState" jdbcType="TINYINT" />
+<result column="tk_default_generation" property="tkDefaultGeneration" jdbcType="TINYINT" />
+<result column="tk_lock_withdraw" property="tkLockWithdraw" jdbcType="TINYINT" />
+<result column="tk_auto_withdraw" property="tkAutoWithdraw" jdbcType="TINYINT" />
+<result column="tk_lock_purchase" property="tkLockPurchase" jdbcType="TINYINT" />
+<result column="tk_min_withdraw_amount" property="tkMinWithdrawAmount" jdbcType="VARCHAR" />
+<result column="tk_withdraw_fee" property="tkWithdrawFee" jdbcType="VARCHAR" />
+<result column="tk_create_date" property="tkCreateDate" jdbcType="TIMESTAMP" />
+<result column="tk_update_date" property="tkUpdateDate" jdbcType="TIMESTAMP" />
+
+<result column="tk_price" property="tkPrice" jdbcType="VARCHAR" />
+<result column="tk_open_price" property="tkOpenPrice" jdbcType="VARCHAR" />
+<result column="tk_high_price" property="tkHighPrice" jdbcType="VARCHAR" />
+<result column="tk_low_price" property="tkLowPrice" jdbcType="VARCHAR" />
+
+<result column="tk_ticker_state" property="tkTickerState" jdbcType="TINYINT" />
+<result column="tk_chart_state" property="tkChartState" jdbcType="TINYINT" />
+<result column="tk_url_chart" property="tkUrlChart" jdbcType="VARCHAR" />
+<result column="tk_url_all_ticker" property="tkUrlAllTicker" jdbcType="VARCHAR" />
+<result column="tk_url_ticker" property="tkUrlTicker" jdbcType="VARCHAR" />
+<result column="tk_ticker_symbol" property="tkTickerSymbol" jdbcType="VARCHAR" />
+<result column="tk_ticker_chart_resolution" property="tkTickerChartResolution" jdbcType="VARCHAR" />
+<result column="tk_ticker_chart_period" property="tkTickerChartPeriod" jdbcType="INTEGER" />
+<result column="tk_chart_data" property="tkChartData" jdbcType="VARCHAR" />
+<result column="tk_erc20_point" property="tkErc20Point" jdbcType="DECIMAL" />
+<result column="tk_erc20_date" property="tkErc20Date" jdbcType="TIMESTAMP" />
+<result column="tk_erc20_state" property="tkErc20State" jdbcType="TINYINT" />
+<result column="tk_gas_fee_deposit_krw" property="tkGasFeeDepositKrw" jdbcType="VARCHAR" />
+</resultMap>
+
+<resultMap id="InfoApiResultMap" type="TokenInfoVOForApi" >
+<id column="tk_idx" property="tokenId" jdbcType="INTEGER" />
+<!--<result column="tk_purpose" property="purpose" jdbcType="TINYINT" />-->
+<result column="tk_order" property="order" jdbcType="TINYINT" />
+<result column="tk_address" property="address" jdbcType="VARCHAR" />
+<result column="tk_decimal" property="decimal" jdbcType="TINYINT" />
+<result column="tk_market_name" property="marketName" jdbcType="VARCHAR" />
+<result column="tk_symbol" property="symbol" jdbcType="VARCHAR" />
+<result column="tk_state" property="state" jdbcType="TINYINT" />
+<result column="tk_lock_withdraw" property="lockWithdraw" jdbcType="TINYINT" />
+<result column="tk_lock_purchase" property="lockPurchase" jdbcType="TINYINT" />
+<result column="tk_price" property="price" jdbcType="VARCHAR" />
+<result column="tk_open_price" property="openPrice" jdbcType="VARCHAR" />
+<result column="tk_high_price" property="highPrice" jdbcType="VARCHAR" />
+<result column="tk_low_price" property="lowPrice" jdbcType="VARCHAR" />
+<result column="tk_withdraw_fee" property="withdrawFee" jdbcType="VARCHAR" />
+<result column="tk_min_withdraw_amount" property="minWithdrawAmount" jdbcType="VARCHAR" />
+</resultMap>
+
+<resultMap id="PriceApiResultMap" type="TokenPriceVOForApi" >
+<id column="tk_idx" property="tokenId" jdbcType="INTEGER" />
+<result column="tk_address" property="address" jdbcType="VARCHAR" />
+<result column="tk_decimal" property="decimal" jdbcType="TINYINT" />
+<result column="tk_market_name" property="marketName" jdbcType="VARCHAR" />
+<result column="tk_symbol" property="symbol" jdbcType="VARCHAR" />
+<result column="tk_price" property="price" jdbcType="VARCHAR" />
+<result column="tk_open_price" property="openPrice" jdbcType="VARCHAR" />
+<result column="tk_high_price" property="highPrice" jdbcType="VARCHAR" />
+<result column="tk_low_price" property="lowPrice" jdbcType="VARCHAR" />
+</resultMap>
+<resultMap id="ChartApiResultMap" type="TokenChartVOForApi" >
+<id column="tk_idx" property="tokenId" jdbcType="INTEGER" />
+<result column="tk_address" property="address" jdbcType="VARCHAR" />
+<result column="tk_decimal" property="decimal" jdbcType="TINYINT" />
+<result column="tk_market_name" property="marketName" jdbcType="VARCHAR" />
+<result column="tk_symbol" property="symbol" jdbcType="VARCHAR" />
+<result column="tk_chart_data" property="chart" jdbcType="VARCHAR" />
+<result column="tk_price" property="price" jdbcType="VARCHAR" />
+<result column="tk_open_price" property="openPrice" jdbcType="VARCHAR" />
+<result column="tk_high_price" property="highPrice" jdbcType="VARCHAR" />
+<result column="tk_low_price" property="lowPrice" jdbcType="VARCHAR" />
+</resultMap>
+
+
+<sql id="BaseSearchQuery">
+<trim suffixOverrides="AND">
+<if test="tkIdx != null">tk_idx = #{tkIdx} AND</if>
+<if test="tkAddress != null">tk_address = #{tkAddress} AND</if>
+<if test="tkMarketName != null">tk_market_name = #{tkMarketName} AND</if>
+<if test="tkSymbol != null">tk_symbol = #{tkSymbol} AND</if>
+<if test="tkSymbolList != null">tk_symbol IN <foreach collection="tkSymbolList" item="item" index="index" separator="," open="(" close=")">#{item} </foreach> AND </if>
+<if test="tkState != null">tk_state = #{tkState} AND</if>
+<if test="tkChartState != null">tk_chart_state = #{tkChartState} AND</if>
+<if test="tkTickerState != null">tk_ticker_state = #{tkTickerState} AND</if>
+<if test="tkDefaultGeneration != null">tk_default_generation = #{tkDefaultGeneration} AND</if>
+<if test="tkStateOver != null">tk_state >= #{tkStateOver} AND</if>
+<if test="tkLockWithdraw != null">tk_lock_withdraw = #{tkLockWithdraw} AND</if>
+<if test="tkAutoWithdraw != null">tk_auto_withdraw = #{tkAutoWithdraw} AND</if>
+<if test="tkLockPurchase != null">tk_lock_purchase = #{tkLockPurchase} AND</if>
+<if test="tkErc20State != null">tk_erc20_state = #{tkErc20State} AND</if>
+<if test="tkAddressIsNotNull != null">tk_address IS NOT NULL AND</if>
+</trim>
+</sql>
+
+<sql id="Base_Column_List" >*</sql>
+<sql id="InfoApi_Column_List" >*</sql>
+<sql id="PriceApi_Column_List" >*</sql>
+<sql id="ChartApi_Column_List" >*</sql>
+
+<insert id="insert" parameterType="TokenInfoVO" >
+insert into z_token_info
+<trim prefix="(" suffix=")" suffixOverrides="," >
+<if test="tkIdx != null" >tk_idx,</if>
+<if test="tkOrder != null" >tk_order,</if>
+<if test="tkPurpose != null" >tk_purpose,</if>
+<if test="tkAddress != null" >tk_address,</if>
+<if test="tkDecimal != null" >tk_decimal,</if>
+<if test="tkRoundingPoint != null" >tk_rounding_point,</if>
+<if test="tkMarketName != null" >tk_market_name,</if>
+<if test="tkSymbol != null" >tk_symbol,</if>
+<if test="tkState != null" >tk_state,</if>
+<if test="tkDefaultGeneration != null" >tk_default_generation,</if>
+<if test="tkLockWithdraw != null" >tk_lock_withdraw,</if>
+<if test="tkAutoWithdraw != null" >tk_auto_withdraw,</if>
+<if test="tkLockPurchase != null" >tk_lock_purchase,</if>
+<if test="tkWithdrawFee != null" >tk_withdraw_fee,</if>
+<if test="tkMinWithdrawAmount != null" >tk_min_withdraw_amount,</if>
+<if test="tkPrice != null" >tk_price,</if>
+<if test="tkOpenPrice != null" >tk_open_price,</if>
+<if test="tkHighPrice != null" >tk_high_price,</if>
+<if test="tkLowPrice != null" >tk_low_price,</if>
+<if test="tkUrlChart != null" >tk_url_chart,</if>
+<if test="tkChartData != null" >tk_chart_data,</if>
+<if test="tkUrlAllTicker != null" >tk_url_all_ticker,</if>
+<if test="tkUrlTicker != null" >tk_url_ticker,</if>
+<if test="tkChartState != null" >tk_chart_state,</if>
+<if test="tkTickerState != null" >tk_ticker_state,</if>
+<if test="tkTickerSymbol != null" >tk_ticker_symbol,</if>
+<if test="tkTickerChartResolution != null" >tk_ticker_chart_resolution,</if>
+<if test="tkTickerChartPeriod != null" >tk_ticker_chart_period,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides="," >
+<if test="tkIdx != null" >#{tkIdx,jdbcType=INTEGER},</if>
+<if test="tkOrder != null" >#{tkOrder,jdbcType=TINYINT},</if>
+<if test="tkPurpose != null" >#{tkPurpose,jdbcType=TINYINT},</if>
+<if test="tkAddress != null" >#{tkAddress,jdbcType=VARCHAR},</if>
+<if test="tkDecimal != null" >#{tkDecimal,jdbcType=TINYINT},</if>
+<if test="tkRoundingPoint != null" >#{tkRoundingPoint,jdbcType=TINYINT},</if>
+<if test="tkMarketName != null" >#{tkMarketName,jdbcType=VARCHAR},</if>
+<if test="tkSymbol != null" >#{tkSymbol,jdbcType=VARCHAR},</if>
+<if test="tkState != null" >#{tkState,jdbcType=TINYINT},</if>
+<if test="tkDefaultGeneration != null" >#{tkDefaultGeneration,jdbcType=TINYINT},</if>
+<if test="tkLockWithdraw != null" >#{tkLockWithdraw,jdbcType=TINYINT},</if>
+<if test="tkAutoWithdraw != null" >#{tkAutoWithdraw,jdbcType=TINYINT},</if>
+<if test="tkLockPurchase != null" >#{tkLockPurchase,jdbcType=TINYINT},</if>
+<if test="tkWithdrawFee != null" >#{tkWithdrawFee,jdbcType=VARCHAR},</if>
+<if test="tkMinWithdrawAmount != null" >#{tkMinWithdrawAmount,jdbcType=VARCHAR},</if>
+<if test="tkPrice != null" >#{tkPrice,jdbcType=VARCHAR},</if>
+<if test="tkOpenPrice != null" >#{tkOpenPrice,jdbcType=VARCHAR},</if>
+<if test="tkHighPrice != null" >#{tkHighPrice,jdbcType=VARCHAR},</if>
+<if test="tkLowPrice != null" >#{tkLowPrice,jdbcType=VARCHAR},</if>
+<if test="tkUrlChart != null" >#{tkUrlChart,jdbcType=VARCHAR},</if>
+<if test="tkChartData != null" >#{tkChartData,jdbcType=VARCHAR},</if>
+<if test="tkUrlAllTicker != null" >#{tkUrlAllTicker,jdbcType=VARCHAR},</if>
+<if test="tkUrlTicker != null" >#{tkUrlTicker,jdbcType=VARCHAR},</if>
+<if test="tkChartState != null" >#{tkChartState,jdbcType=TINYINT},</if>
+<if test="tkTickerState != null" >#{tkTickerState,jdbcType=TINYINT},</if>
+<if test="tkTickerSymbol != null" >#{tkTickerSymbol,jdbcType=VARCHAR},</if>
+<if test="tkTickerChartResolution != null" >#{tkTickerChartResolution,jdbcType=VARCHAR},</if>
+<if test="tkTickerChartPeriod != null" >#{tkTickerChartPeriod,jdbcType=VARCHAR},</if>
+</trim>
+</insert>
+<update id="update" parameterType="TokenInfoVO" >
+update z_token_info
+<set >
+<if test="tkOrder != null" >tk_order = #{tkOrder,jdbcType=TINYINT},</if>
+<if test="tkPurpose != null" >tk_purpose = #{tkPurpose,jdbcType=TINYINT},</if>
+<if test="tkAddress != null" >tk_address = #{tkAddress,jdbcType=VARCHAR},</if>
+<if test="tkDecimal != null" >tk_decimal = #{tkDecimal,jdbcType=TINYINT},</if>
+<if test="tkRoundingPoint != null" >tk_rounding_point = #{tkRoundingPoint,jdbcType=TINYINT},</if>
+<if test="tkMarketName != null" >tk_market_name = #{tkMarketName,jdbcType=VARCHAR},</if>
+<if test="tkSymbol != null" >tk_symbol = #{tkSymbol,jdbcType=VARCHAR},</if>
+<if test="tkState != null" >tk_state = #{tkState,jdbcType=TINYINT},</if>
+<if test="tkDefaultGeneration != null" >tk_default_generation = #{tkDefaultGeneration,jdbcType=TINYINT},</if>
+<if test="tkLockWithdraw != null" >tk_lock_withdraw = #{tkLockWithdraw,jdbcType=TINYINT},</if>
+<if test="tkAutoWithdraw != null" >tk_auto_withdraw = #{tkAutoWithdraw,jdbcType=TINYINT},</if>
+<if test="tkLockPurchase != null" >tk_lock_purchase = #{tkLockPurchase,jdbcType=TINYINT},</if>
+<if test="tkWithdrawFee != null" >tk_withdraw_fee = #{tkWithdrawFee,jdbcType=VARCHAR},</if>
+<if test="tkMinWithdrawAmount != null" >tk_min_withdraw_amount = #{tkMinWithdrawAmount,jdbcType=VARCHAR},</if>
+<if test="tkCreateDate != null" >tk_create_date = #{tkCreateDate,jdbcType=TIMESTAMP},</if>
+<if test="tkUpdateDate != null" >tk_update_date = #{tkUpdateDate,jdbcType=TIMESTAMP},</if>
+<if test="tkPrice != null" >tk_price = #{tkPrice,jdbcType=VARCHAR},</if>
+<if test="tkOpenPrice != null" >tk_open_price = #{tkOpenPrice,jdbcType=VARCHAR},</if>
+<if test="tkHighPrice != null" >tk_high_price = #{tkHighPrice,jdbcType=VARCHAR},</if>
+<if test="tkLowPrice != null" >tk_low_price = #{tkLowPrice,jdbcType=VARCHAR},</if>
+<if test="tkUrlChart != null" >tk_url_chart = #{tkUrlChart,jdbcType=VARCHAR},</if>
+<if test="tkChartData != null" >tk_chart_data = #{tkChartData,jdbcType=VARCHAR},</if>
+<if test="tkUrlAllTicker != null" >tk_url_all_ticker = #{tkUrlAllTicker,jdbcType=VARCHAR},</if>
+<if test="tkUrlTicker != null" >tk_url_ticker = #{tkUrlTicker,jdbcType=VARCHAR},</if>
+<if test="tkChartState != null" >tk_chart_state = #{tkChartState,jdbcType=TINYINT},</if>
+<if test="tkTickerState != null" >tk_ticker_state = #{tkTickerState,jdbcType=TINYINT},</if>
+<if test="tkTickerSymbol != null" >tk_ticker_symbol = #{tkTickerSymbol,jdbcType=VARCHAR},</if>
+<if test="tkTickerChartResolution != null" >tk_ticker_chart_resolution= #{tkTickerChartResolution,jdbcType=VARCHAR},</if>
+<if test="tkTickerChartPeriod != null" >tk_ticker_chart_period = #{tkTickerChartPeriod,jdbcType=INTEGER},</if>
+<if test="tkErc20Point != null" >tk_erc20_point = #{tkErc20Point,jdbcType=DECIMAL},</if>
+<if test="tkErc20Date != null" >tk_erc20_date = #{tkErc20Date,jdbcType=TIMESTAMP},</if>
+<if test="tkErc20State != null" >tk_erc20_state = #{tkErc20State,jdbcType=TINYINT},</if>
+</set>
+where tk_idx = #{tkIdx,jdbcType=INTEGER}
+</update>
+
+<select id="selectBySearchForInfoApi" parameterType="hashmap" resultMap="InfoApiResultMap">SELECT <include refid="InfoApi_Column_List"/> FROM z_token_info <where> <include refid="BaseSearchQuery"/> </where> <if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if> <if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if> <if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectBySearchForPriceApi" parameterType="hashmap" resultMap="PriceApiResultMap">SELECT <include refid="PriceApi_Column_List"/> FROM z_token_info <where> <include refid="BaseSearchQuery"/> </where> <if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if> <if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if> <if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectBySearchForChartApi" parameterType="hashmap" resultMap="ChartApiResultMap">SELECT <include refid="ChartApi_Column_List"/> FROM z_token_info <where> <include refid="BaseSearchQuery"/> </where> <if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if> <if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if> <if test="limit != null">LIMIT #{limit}</if></select>
+
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_token_info <where> <include refid="BaseSearchQuery"/> </where> <if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if> <if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if> <if test="limit != null">LIMIT #{limit}</if></select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_token_info <if test="orderColumn != null">Order by ${orderColumn} ${order}</if> <if test="limit != null">LIMIT #{limit}</if> </select>
+<select id="countBySearch" parameterType="hashmap" resultType="Integer">SELECT COUNT(*) FROM z_token_info <where> <include refid="BaseSearchQuery"/> </where> </select>
+<select id="countAll" resultType="Integer">SELECT COUNT(*) FROM z_token_info </select>
+
+<select id="selectByIndex" resultMap="BaseResultMap" parameterType="java.lang.Integer" >select <include refid="Base_Column_List" /> from z_token_info where tk_idx = #{tkIdx,jdbcType=INTEGER} </select>
+<delete id="deleteByIndex" parameterType="java.lang.Integer" >delete from z_token_info where tk_idx = #{tkIdx,jdbcType=INTEGER} </delete>
+</mapper>

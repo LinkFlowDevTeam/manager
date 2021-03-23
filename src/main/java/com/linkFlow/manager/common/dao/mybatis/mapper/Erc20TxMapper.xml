@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linkFlow.manager.common.dao.Erc20TxDao" >
+<resultMap id="BaseResultMap" type="Erc20TxVO" >
+<id column="et_idx" property="etIdx" jdbcType="BIGINT" />
+<result column="et_create_date" property="etCreateDate" jdbcType="TIMESTAMP" />
+<result column="et_update_date" property="etUpdateDate" jdbcType="TIMESTAMP" />
+<result column="et_timestamp_date" property="etTimestampDate" jdbcType="TIMESTAMP" />
+<result column="et_state" property="etState" jdbcType="TINYINT" />
+<result column="et_tx_state" property="etTxState" jdbcType="TINYINT" />
+<result column="et_value" property="etValue" jdbcType="DECIMAL" />
+<result column="et_rc_contract_address" property="etRcContractAddress" jdbcType="VARCHAR" />
+<result column="et_rc_log_length" property="etRcLogLength" jdbcType="INTEGER" />
+<result column="et_rc_status" property="etRcStatus" jdbcType="VARCHAR" />
+<result column="et_rc_cumulative_gas_used" property="etRcCumulativeGasUsed" jdbcType="BIGINT" />
+<result column="et_rc_gas_used" property="etRcGasUsed" jdbcType="BIGINT" />
+<result column="et_rc_gas_limit" property="etRcGasLimit" jdbcType="BIGINT" />
+<result column="et_block_number" property="etBlockNumber" jdbcType="BIGINT" />
+<result column="et_block_string" property="etBlockString" jdbcType="VARCHAR" />
+<result column="et_block_hash" property="etBlockHash" jdbcType="VARCHAR" />
+<result column="et_from" property="etFrom" jdbcType="VARCHAR" />
+<result column="et_to" property="etTo" jdbcType="VARCHAR" />
+<result column="et_tx_hash" property="etTxHash" jdbcType="VARCHAR" />
+<result column="et_tx_index" property="etTxIndex" jdbcType="INTEGER" />
+<result column="et_tx_gas" property="etTxGas" jdbcType="BIGINT" />
+<result column="et_tx_gas_price" property="etTxGasPrice" jdbcType="BIGINT" />
+<result column="et_tx_value" property="etTxValue" jdbcType="VARCHAR" />
+<result column="et_tx_input" property="etTxInput" jdbcType="LONGVARCHAR" />
+<result column="et_function_address" property="etFunctionAddress" jdbcType="VARCHAR" />
+<result column="et_actual_to" property="etActualTo" jdbcType="VARCHAR" />
+<result column="et_actual_amount" property="etActualAmount" jdbcType="DECIMAL" />
+<result column="et_actual_string" property="etActualString" jdbcType="VARCHAR" />
+<result column="et_extra_message" property="etExtraMessage" jdbcType="LONGVARCHAR" />
+<result column="et_flag_manager" property="etFlagManager" jdbcType="TINYINT" />
+<result column="et_tk_idx" property="etTkIdx" jdbcType="INTEGER" />
+</resultMap>
+
+<sql id="Base_Column_List" >et_idx, et_create_date, et_update_date,et_timestamp_date, et_state,et_tx_state, et_value, et_rc_contract_address,et_rc_log_length, et_rc_status, et_rc_cumulative_gas_used, et_rc_gas_used, et_rc_gas_limit, et_block_number,et_block_string, et_block_hash, et_from, et_to, et_tx_hash, et_tx_index, et_tx_gas,et_tx_gas_price, et_tx_value, et_tx_input,et_function_address,et_actual_to,et_actual_amount,et_actual_string,et_extra_message,et_flag_manager,et_tk_idx</sql>
+
+<sql id="BaseSearchQuery">
+<trim suffixOverrides="AND">
+<if test="searchColumn != null and search != ''">
+<if test="searchColumn == 'all'">
+(et_tx_hash = #{search} OR
+et_from = #{search} OR
+et_to = #{search} OR
+et_actual_to = #{search} OR
+et_block_hash = #{search}) AND
+</if>
+</if>
+<if test="etIdx != null">et_idx = #{etIdx} AND</if>
+<if test="etState != null">et_state = #{etState} AND</if>
+<if test="etTxState != null">et_tx_state = #{etTxState} AND</if>
+<if test="etRcStatus != null">et_rc_status = #{etRcStatus} AND</if>
+<if test="etRcStatusIsNull != null">et_rc_status IS NULL AND</if>
+<if test="etTxHash != null">et_tx_hash = #{etTxHash} AND</if>
+<if test="etTxIndex != null">et_tx_index = #{etTxIndex} AND</if>
+<if test="etBlockHash != null">et_block_hash = #{etBlockHash} AND</if>
+<if test="etBlockString != null">et_block_string = #{etBlockString} AND</if>
+<if test="etBlockNumber != null">et_block_number = #{etBlockNumber} AND</if>
+<if test="etActualTo != null">et_actual_to = #{etActualTo} AND</if>
+<if test="etFunctionAddress != null">et_function_address = #{etFunctionAddress} AND</if>
+<if test="etFlagManager != null">et_flag_manager = #{etFlagManager} AND</if>
+<if test="etTkIdx != null">et_tk_idx = #{etTkIdx} AND</if>
+<if test="searchStartDate != null and searchStartDate != ''">et_timestamp_date >= #{searchStartDate} AND</if>
+<if test="searchEndDate != null and searchEndDate != ''">#{searchEndDate} >= et_timestamp_date AND</if>
+<if test="searchSecond != null and searchSecond != ''">DATE_SUB(SYSDATE(), INTERVAL ${searchSecond} SECOND) >= et_timestamp_date AND</if>
+<if test="etStateList != null">et_state IN <foreach collection="etStateList" item="item" index="index" separator="," open="(" close=")">#{item} </foreach> AND </if>
+</trim>
+</sql>
+
+<insert id="insert" parameterType="Erc20TxVO" ></insert>
+<insert id="insertNotExist" parameterType="Erc20TxVO" >
+insert IGNORE into z_erc20_tx
+<trim prefix="(" suffix=")" suffixOverrides="," >
+<if test="etTimestampDate != null" >et_timestamp_date,</if>
+<if test="etState != null" >et_state,</if>
+<if test="etTxState != null" >et_tx_state,</if>
+<if test="etValue != null" >et_value,</if>
+<if test="etRcContractAddress != null" >et_rc_contract_address,</if>
+<if test="etRcLogLength != null" >et_rc_log_length,</if>
+<if test="etRcStatus != null" >et_rc_status,</if>
+<if test="etRcCumulativeGasUsed != null" >et_rc_cumulative_gas_used,</if>
+<if test="etRcGasUsed != null" >et_rc_gas_used,</if>
+<if test="etRcGasLimit != null" >et_rc_gas_limit,</if>
+<if test="etBlockNumber != null" >et_block_number,</if>
+<if test="etBlockString != null" >et_block_string,</if>
+<if test="etBlockHash != null" >et_block_hash,</if>
+<if test="etFrom != null" >et_from,</if>
+<if test="etTo != null" >et_to,</if>
+<if test="etTxHash != null" >et_tx_hash,</if>
+<if test="etTxIndex != null" >et_tx_index,</if>
+<if test="etTxGas != null" >et_tx_gas,</if>
+<if test="etTxGasPrice != null" >et_tx_gas_price,</if>
+<if test="etTxValue != null" >et_tx_value,</if>
+<if test="etTxInput != null" >et_tx_input,</if>
+<if test="etFunctionAddress != null" >et_function_address,</if>
+<if test="etActualTo != null" >et_actual_to,</if>
+<if test="etActualAmount != null" >et_actual_amount,</if>
+<if test="etActualString != null" >et_actual_string,</if>
+<if test="etExtraMessage != null" >et_extra_message,</if>
+<if test="etFlagManager != null" >et_flag_manager,</if>
+<if test="etTkIdx != null" >et_tk_idx,</if>
+</trim>
+<trim prefix="values (" suffix=")" suffixOverrides="," >
+<if test="etTimestampDate != null" >#{etTimestampDate,jdbcType=TIMESTAMP},</if>
+<if test="etState != null" >#{etState,jdbcType=TINYINT},</if>
+<if test="etTxState != null" >#{etTxState,jdbcType=TINYINT},</if>
+<if test="etValue != null" >#{etValue,jdbcType=DECIMAL},</if>
+<if test="etRcContractAddress != null" >#{etRcContractAddress,jdbcType=VARCHAR},</if>
+<if test="etRcLogLength != null" >#{etRcLogLength,jdbcType=INTEGER},</if>
+<if test="etRcStatus != null" >#{etRcStatus,jdbcType=INTEGER},</if>
+<if test="etRcCumulativeGasUsed != null" >#{etRcCumulativeGasUsed,jdbcType=BIGINT},</if>
+<if test="etRcGasUsed != null" >#{etRcGasUsed,jdbcType=BIGINT},</if>
+<if test="etRcGasLimit != null" >#{etRcGasLimit,jdbcType=BIGINT},</if>
+<if test="etBlockNumber != null" >#{etBlockNumber,jdbcType=BIGINT},</if>
+<if test="etBlockString != null" >#{etBlockString,jdbcType=VARCHAR},</if>
+<if test="etBlockHash != null" >#{etBlockHash,jdbcType=VARCHAR},</if>
+<if test="etFrom != null" >#{etFrom,jdbcType=VARCHAR},</if>
+<if test="etTo != null" >#{etTo,jdbcType=VARCHAR},</if>
+<if test="etTxHash != null" >#{etTxHash,jdbcType=VARCHAR},</if>
+<if test="etTxIndex != null" >#{etTxIndex,jdbcType=INTEGER},</if>
+<if test="etTxGas != null" >#{etTxGas,jdbcType=BIGINT},</if>
+<if test="etTxGasPrice != null" >#{etTxGasPrice,jdbcType=BIGINT},</if>
+<if test="etTxValue != null" >#{etTxValue,jdbcType=VARCHAR},</if>
+<if test="etTxInput != null" >#{etTxInput,jdbcType=LONGVARCHAR},</if>
+<if test="etFunctionAddress!= null" >#{etFunctionAddress,jdbcType=VARCHAR},</if>
+<if test="etActualTo!= null" >#{etActualTo,jdbcType=VARCHAR},</if>
+<if test="etActualAmount!= null" >#{etActualAmount,jdbcType=DECIMAL},</if>
+<if test="etActualString!= null" >#{etActualString,jdbcType=VARCHAR},</if>
+<if test="etExtraMessage!= null" >#{etExtraMessage,jdbcType=LONGVARCHAR},</if>
+<if test="etFlagManager != null" >#{etFlagManager,jdbcType=TINYINT},</if>
+<if test="etTkIdx != null" >#{etTkIdx,jdbcType=INTEGER},</if>
+</trim>
+</insert>
+
+<update id="update" parameterType="Erc20TxVO" >
+update z_erc20_tx
+<set >
+<if test="etUpdateDate != null" >et_update_date = #{etUpdateDate,jdbcType=TIMESTAMP},</if>
+<if test="etTimestampDate != null" >et_timestamp_date = #{etTimestampDate,jdbcType=TIMESTAMP},</if>
+<if test="etState != null" >et_state = #{etState,jdbcType=TINYINT},</if>
+<if test="etTxState != null" >et_tx_state = #{etTxState,jdbcType=TINYINT},</if>
+<if test="etValue != null" >et_value = #{etValue,jdbcType=DECIMAL},</if>
+<if test="etRcContractAddress != null" >et_rc_contract_address = #{etRcContractAddress,jdbcType=VARCHAR},</if>
+<if test="etRcLogLength != null" >et_rc_log_length = #{etRcLogLength,jdbcType=INTEGER},</if>
+<if test="etRcStatus != null" >et_rc_status = #{etRcStatus,jdbcType=VARCHAR},</if>
+<if test="etRcCumulativeGasUsed != null" >et_rc_cumulative_gas_used = #{etRcCumulativeGasUsed,jdbcType=BIGINT},</if>
+<if test="etRcGasUsed != null" >et_rc_gas_used = #{etRcGasUsed,jdbcType=BIGINT},</if>
+<if test="etRcGasLimit != null" >et_rc_gas_limit = #{etRcGasLimit,jdbcType=BIGINT},</if>
+<if test="etBlockNumber != null" >et_block_number = #{etBlockNumber,jdbcType=BIGINT},</if>
+<if test="etBlockString != null" >et_block_string = #{etBlockString,jdbcType=VARCHAR},</if>
+<if test="etBlockHash != null" >et_block_hash = #{etBlockHash,jdbcType=VARCHAR},</if>
+<if test="etFrom != null" >et_from = #{etFrom,jdbcType=VARCHAR},</if>
+<if test="etTo != null" >et_to = #{etTo,jdbcType=VARCHAR},</if>
+<if test="etTxHash != null" >et_tx_hash = #{etTxHash,jdbcType=VARCHAR},</if>
+<if test="etTxIndex != null" >et_tx_index = #{etTxIndex,jdbcType=INTEGER},</if>
+<if test="etTxGas != null" >et_tx_gas = #{etTxGas,jdbcType=BIGINT},</if>
+<if test="etTxGasPrice != null" >et_tx_gas_price = #{etTxGasPrice,jdbcType=BIGINT},</if>
+<if test="etTxValue != null" >et_tx_value = #{etTxValue,jdbcType=VARCHAR},</if>
+<if test="etTxInput != null" >et_tx_input = #{etTxInput,jdbcType=LONGVARCHAR},</if>
+<if test="etFlagManager != null" >et_flag_manager = #{etFlagManager,jdbcType=TINYINT},</if>
+<if test="etTkIdx != null" >et_tk_idx= #{etTkIdx,jdbcType=INTEGER},</if>
+</set>
+where et_idx = #{etIdx,jdbcType=BIGINT}
+</update>
+
+<select id="selectBySearch" parameterType="hashmap" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_erc20_tx <where><include refid="BaseSearchQuery"/></where><if test="orderColumn != null">ORDER BY ${orderColumn} ${order}</if><if test="startRow != null and rowCount != null">LIMIT #{startRow}, #{rowCount}</if><if test="limit != null">LIMIT #{limit}</if></select>
+<select id="countBySearch" parameterType="hashmap" resultType="Long">SELECT COUNT(*) FROM z_erc20_tx <where><include refid="BaseSearchQuery"/></where></select>
+<select id="selectAll" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/> FROM z_erc20_tx <if test="orderColumn != null"> Order by ${orderColumn} ${order} </if> <if test="limit != null">LIMIT #{limit}</if></select>
+<select id="countAll" resultType="Long">SELECT COUNT(*) FROM z_erc20_tx</select>
+<select id="selectByIndex" resultMap="BaseResultMap">SELECT <include refid="Base_Column_List"/>FROM z_erc20_tx WHERE et_idx = #{idx}</select>
+<delete id="deleteByIndex" parameterType="Long">DELETE FROM z_erc20_tx WHERE et_idx = #{idx}</delete>
+
+<delete id="deleteUseless" parameterType="hashmap">DELETE FROM z_erc20_tx WHERE et_idx >= 0 AND et_state = 1 AND DATE_SUB(SYSDATE(), INTERVAL ${searchSecond} SECOND) >= et_timestamp_date</delete>
+</mapper>
